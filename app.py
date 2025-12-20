@@ -77,11 +77,89 @@ def recommendations(level, domain):
             "Apply for internships & jobs"
         ]
 
+COURSES = [
+    {
+        "title": "Python for Everybody",
+        "platform": "Coursera",
+        "domain": "Programming",
+        "level": "Beginner",
+        "link": "https://www.coursera.org/learn/python"
+    },
+    {
+        "title": "DSA Basics",
+        "platform": "YouTube (FreeCodeCamp)",
+        "domain": "DSA",
+        "level": "Beginner",
+        "link": "https://www.youtube.com/watch?v=8hly31xKli0"
+    },
+    {
+        "title": "Operating Systems",
+        "platform": "NPTEL",
+        "domain": "CS Fundamentals",
+        "level": "Intermediate",
+        "link": "https://nptel.ac.in/courses/106"
+    },
+    {
+        "title": "Machine Learning",
+        "platform": "Coursera",
+        "domain": "ML",
+        "level": "Intermediate",
+        "link": "https://www.coursera.org/learn/machine-learning"
+    },
+    {
+        "title": "Deep Learning Specialization",
+        "platform": "Coursera",
+        "domain": "ML",
+        "level": "Expert",
+        "link": "https://www.coursera.org/specializations/deep-learning"
+    }
+]
+
+
+
+JOB_REQUIREMENTS = {
+    "Software Engineer": {
+        "level": "Intermediate",
+        "skills": [
+            "DSA (Arrays, Trees, Graphs)",
+            "OOPS",
+            "One programming language (Java / Python / C++)",
+            "Basic System Design"
+        ]
+    },
+    "Data Analyst": {
+        "level": "Beginner",
+        "skills": [
+            "Python / Excel",
+            "SQL",
+            "Data Visualization",
+            "Statistics basics"
+        ]
+    },
+    "ML Engineer": {
+        "level": "Expert",
+        "skills": [
+            "Machine Learning algorithms",
+            "Python & Libraries",
+            "Model deployment",
+            "Data preprocessing"
+        ]
+    }
+}
+
+
 # ---------------- SIDEBAR MENU ----------------
 st.sidebar.image("assets/Gemini_Generated_Image_8dz04g8dz04g8dz0.png", width=120)
 menu = st.sidebar.radio(
     "Navigation",
-    ["🏠 Home", "👤 Create Profile", "📊 Placement Readiness", "💡 Guidance", "ℹ️ About VYNOX"]
+    [
+        "🏠 Home",
+        "👤 Create Profile",
+        "📊 Placement Readiness & Guidance",
+        "📚 Free Courses",
+        "💼 Job Entry Requirements",
+        "ℹ️ About VYNOX"
+    ]
 )
 
 # ---------------- HOME PAGE ----------------
@@ -141,26 +219,62 @@ elif menu == "👤 Create Profile":
             }
             st.success("Profile saved successfully")
 
-# ---------------- PLACEMENT READINESS ----------------
-elif menu == "📊 Placement Readiness":
+# ---------------- PLACEMENT READINESS and guidance----------------
+elif menu == "📊 Placement Readiness & Guidance":
     if "profile" not in st.session_state:
-        st.warning("Please create your profile first")
+        st.warning("⚠️ Please create your profile first")
     else:
-        level, score = predict_level(st.session_state.profile)
-        st.header("Placement Readiness Result")
-        st.subheader(f"Level: {level}")
-        st.progress(score)
-        st.write(f"Readiness Score: {score}%")
+        profile = st.session_state.profile
+        level, score = predict_level(profile)
 
-# ---------------- GUIDANCE ----------------
-elif menu == "💡 Guidance":
-    if "profile" not in st.session_state:
-        st.warning("Please create your profile first")
-    else:
-        level, _ = predict_level(st.session_state.profile)
-        st.header("Personalized Guidance")
-        for r in recommendations(level, st.session_state.profile["domain_focus"]):
-            st.write("✔️", r)
+        st.header("📊 Placement Readiness Result")
+        st.subheader(f"Level: **{level}**")
+        st.progress(score)
+        st.write(f"Readiness Score: **{score}%**")
+
+        st.divider()
+
+        st.header("💡 Personalized Guidance")
+        guidance = recommendations(level, profile["domain_focus"])
+        for g in guidance:
+            st.write("✔️", g)
+
+# ---------------- Online courses----------------
+elif menu == "📚 Free Courses":
+    st.header("📚 Free & Efficient Online Courses")
+
+    search = st.text_input("🔍 Search course (title / domain / level)")
+    domain_filter = st.selectbox("Filter by Domain", ["All", "Programming", "DSA", "ML", "CS Fundamentals"])
+    level_filter = st.selectbox("Filter by Level", ["All", "Beginner", "Intermediate", "Expert"])
+
+    for course in COURSES:
+        text = f"{course['title']} {course['domain']} {course['level']}".lower()
+
+        if search.lower() not in text:
+            continue
+        if domain_filter != "All" and course["domain"] != domain_filter:
+            continue
+        if level_filter != "All" and course["level"] != level_filter:
+            continue
+
+        st.subheader(course["title"])
+        st.write(f"📌 Platform: {course['platform']}")
+        st.write(f"🎯 Domain: {course['domain']}")
+        st.write(f"📈 Level: {course['level']}")
+        st.markdown(f"[🔗 Go to Course]({course['link']})")
+        st.divider()
+
+# ---------------- Job----------------
+elif menu == "💼 Job Entry Requirements":
+    st.header("💼 Job Entry & Requirement Guide")
+
+    for job, info in JOB_REQUIREMENTS.items():
+        st.subheader(job)
+        st.write(f"🎯 Minimum Level Required: **{info['level']}**")
+        st.write("🛠 Required Skills:")
+        for skill in info["skills"]:
+            st.write("•", skill)
+        st.divider()
 
 # ---------------- ABOUT ----------------
 elif menu == "ℹ️ About VYNOX":
