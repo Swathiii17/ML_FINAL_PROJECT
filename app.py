@@ -1,9 +1,11 @@
-# app.py
 import streamlit as st
 import numpy as np
 import joblib
 
-# ---------------- Load ML Model ----------------
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(page_title="VYNOX | Placement Readiness", layout="wide")
+
+# ---------------- LOAD MODEL ----------------
 clf = joblib.load("placement_model.pkl")
 le_dsa = joblib.load("le_dsa.pkl")
 le_major = joblib.load("le_major.pkl")
@@ -11,7 +13,7 @@ le_github = joblib.load("le_github.pkl")
 le_domain = joblib.load("le_domain.pkl")
 le_target = joblib.load("le_target.pkl")
 
-# ---------------- Prediction Function ----------------
+# ---------------- FUNCTIONS ----------------
 def predict_level(profile):
     dsa = le_dsa.transform([profile['dsa_level']])[0]
     major = le_major.transform([profile['major_project']])[0]
@@ -35,23 +37,21 @@ def predict_level(profile):
     ]).reshape(1, -1)
 
     pred = clf.predict(X)[0]
-    prob = np.max(clf.predict_proba(X)) * 100
+    score = int(np.max(clf.predict_proba(X)) * 100)
     level = le_target.inverse_transform([pred])[0]
+    return level, score
 
-    return level, int(prob)
 
-# ---------------- Recommendation Engine ----------------
 def recommendations(level, domain):
     if level == "Beginner":
         return [
-            "Learn Programming Fundamentals (Python / Java)",
-            "Start DSA Basics",
-            "Complete CS Fundamentals (OS, DBMS, CN)",
-            "Solve 5 problems daily"
+            "Learn programming fundamentals (Python / Java)",
+            "Start DSA basics",
+            "Study OS, DBMS, CN fundamentals",
+            "Practice 5 DSA problems daily"
         ]
-
     elif level == "Intermediate":
-        domain_projects = {
+        projects = {
             "Web": "Job Portal / Portfolio Website",
             "ML": "Student Placement Prediction System",
             "Data": "Student Performance Analysis",
@@ -59,34 +59,52 @@ def recommendations(level, domain):
         }
         return [
             f"Focus on {domain} domain",
-            domain_projects[domain],
-            "Improve GitHub & Resume",
+            projects[domain],
+            "Improve GitHub and Resume",
             "Start mock interviews"
         ]
-
     else:
-        advanced_projects = {
+        advanced = {
             "Web": "Full Stack E-commerce Platform",
             "ML": "AI Interview Bot / Recommendation System",
-            "Data": "Predictive Analytics with Real Data",
+            "Data": "Predictive Analytics System",
             "Core": "OS Performance Optimization"
         }
         return [
-            advanced_projects[domain],
-            "Prepare for company-specific interviews",
-            "Practice system design",
+            advanced[domain],
+            "Company-specific interview preparation",
+            "System design practice",
             "Apply for internships & jobs"
         ]
 
-# ---------------- UI ----------------
-st.set_page_config(page_title="Placement Readiness App", layout="wide")
-st.title("🎯 Student Placement Readiness & Career Guidance App")
+# ---------------- SIDEBAR MENU ----------------
+st.sidebar.image("assets/vynox_logo.png", width=120)
+menu = st.sidebar.radio(
+    "Navigation",
+    ["🏠 Home", "👤 Create Profile", "📊 Placement Readiness", "💡 Guidance", "ℹ️ About VYNOX"]
+)
 
-menu = st.sidebar.selectbox("Menu", ["Create Profile", "Result & Guidance"])
+# ---------------- HOME PAGE ----------------
+if menu == "🏠 Home":
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.image("assets/vynox_logo.png", width=220)
+    with col2:
+        st.title("VYNOX")
+        st.subheader("A Product-Based Company")
+        st.write(
+            """
+            **VYNOX** is a product-based company focused on empowering students 
+            with AI-driven career and placement guidance.
 
-# ---------------- Profile Page ----------------
-if menu == "Create Profile":
-    st.header("📝 Student Profile")
+            Our platform analyzes student skills, predicts placement readiness,
+            and provides personalized learning, project, and job recommendations.
+            """
+        )
+
+# ---------------- PROFILE PAGE ----------------
+elif menu == "👤 Create Profile":
+    st.header("Student Profile")
 
     with st.form("profile_form"):
         dsa_level = st.selectbox("DSA Level", ["Beginner", "Intermediate", "Advanced"])
@@ -94,7 +112,7 @@ if menu == "Create Profile":
         language_count = st.number_input("Languages Known", 1, 10)
         cs_fundamentals = st.slider("CS Fundamentals (1-5)", 1, 5)
         project_count = st.number_input("Projects Completed", 0, 10)
-        major_project = st.selectbox("Major Project Done?", ["No", "Yes"])
+        major_project = st.selectbox("Major Project Completed?", ["No", "Yes"])
         github_quality = st.selectbox("GitHub Quality", ["Low", "Medium", "High"])
         domain_focus = st.selectbox("Domain Focus", ["Web", "ML", "Data", "Core"])
         communication = st.slider("Communication Skills (1-5)", 1, 5)
@@ -121,22 +139,36 @@ if menu == "Create Profile":
                 "learning_consistency": learning_consistency,
                 "self_awareness": self_awareness
             }
-            st.success("✅ Profile Saved Successfully")
+            st.success("Profile saved successfully")
 
-# ---------------- Result Page ----------------
-if menu == "Result & Guidance":
+# ---------------- PLACEMENT READINESS ----------------
+elif menu == "📊 Placement Readiness":
     if "profile" not in st.session_state:
-        st.warning("⚠️ Please create your profile first")
+        st.warning("Please create your profile first")
     else:
-        profile = st.session_state.profile
-        level, score = predict_level(profile)
-
-        st.header("📊 Placement Readiness Result")
-        st.subheader(f"Level: **{level}**")
+        level, score = predict_level(st.session_state.profile)
+        st.header("Placement Readiness Result")
+        st.subheader(f"Level: {level}")
         st.progress(score)
-        st.write(f"Readiness Score: **{score}%**")
+        st.write(f"Readiness Score: {score}%")
 
-        st.header("💡 Personalized Guidance")
-        recs = recommendations(level, profile["domain_focus"])
-        for r in recs:
+# ---------------- GUIDANCE ----------------
+elif menu == "💡 Guidance":
+    if "profile" not in st.session_state:
+        st.warning("Please create your profile first")
+    else:
+        level, _ = predict_level(st.session_state.profile)
+        st.header("Personalized Guidance")
+        for r in recommendations(level, st.session_state.profile["domain_focus"]):
             st.write("✔️", r)
+
+# ---------------- ABOUT ----------------
+elif menu == "ℹ️ About VYNOX":
+    st.header("About VYNOX")
+    st.write("**VYNOX** is a product-based company building intelligent career solutions for students.")
+
+    st.subheader("👥 Team Members")
+    st.write("- **Swathika** – Team Lead")
+    st.write("- **Vishwa** – Tech Lead")
+    st.write("- **Santhosh** – Designer")
+
