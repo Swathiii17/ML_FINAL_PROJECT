@@ -88,7 +88,7 @@ menu = st.sidebar.radio(
 if menu == "🏠 Home":
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.image("assets/vynox_logo.png", width=220)
+        st.image("assets/Gemini_Generated_Image_8dz04g8dz04g8dz0.png", width=220)
     with col2:
         st.title("VYNOX")
         st.subheader("A Product-Based Company")
