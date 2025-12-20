@@ -78,7 +78,7 @@ def recommendations(level, domain):
         ]
 
 # ---------------- SIDEBAR MENU ----------------
-st.sidebar.image("assets/vynox_logo.png", width=120)
+st.sidebar.image("assets/Gemini_Generated_Image_8dz04g8dz04g8dz0.png", width=120)
 menu = st.sidebar.radio(
     "Navigation",
     ["🏠 Home", "👤 Create Profile", "📊 Placement Readiness", "💡 Guidance", "ℹ️ About VYNOX"]
