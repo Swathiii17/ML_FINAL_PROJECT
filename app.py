@@ -17,13 +17,14 @@ if st.session_state.page == "landing":
 
     st.image("assets/landing.png", use_column_width=True)
 
-    col1, col2 = st.columns([4, 1])
-    with col2:
-        st.markdown("<br><br><br>", unsafe_allow_html=True)
+    # Overlay illusion using spacing
+    st.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([6, 2, 2])
+    with col3:
         if st.button("🌱 Join Us"):
             st.session_state.page = "main"
             st.rerun()
-
 
 # ---------------- LOAD MODEL ----------------
 clf = joblib.load("placement_model.pkl")
