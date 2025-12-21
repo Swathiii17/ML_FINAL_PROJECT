@@ -17,7 +17,8 @@ if st.session_state.page == "landing":
 
     st.markdown("""
     <style>
-    .hero {
+    /* Hero image container */
+    .hero-container {
         position: relative;
         width: 100%;
         height: 90vh;
@@ -27,50 +28,32 @@ if st.session_state.page == "landing":
         border-radius: 12px;
     }
 
-    .hero-button {
+    /* Move Streamlit button on top of image */
+    div.stButton > button {
         position: absolute;
         top: 40%;
         right: 15%;
-    }
-
-    .hero-button button {
         font-size: 20px;
         padding: 14px 40px;
         border-radius: 50px;
         border: 2px solid white;
-        background: rgba(0,0,0,0.3);
+        background: rgba(0,0,0,0.35);
         color: white;
-        cursor: pointer;
     }
 
-    .hero-button button:hover {
-        background: rgba(255,255,255,0.2);
+    div.stButton > button:hover {
+        background: rgba(255,255,255,0.25);
         color: white;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # HERO SECTION
-    st.markdown("""
-    <div class="hero">
-        <div class="hero-button">
-            <form method="post">
-                <button name="join">Join Us !!</button>
-            </form>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="hero-container"></div>', unsafe_allow_html=True)
 
-    # CLICK HANDLER
-    if "join" in st.session_state:
+    # REAL STREAMLIT BUTTON (click works perfectly)
+    if st.button("Join Us !!"):
         st.session_state.page = "main"
         st.rerun()
-
-    # fallback click (Streamlit limitation workaround)
-    if st.button("hidden_join", key="hidden_join", help=""):
-        st.session_state.page = "main"
-        st.rerun()
-
 
 # ---------------- LOAD MODEL ----------------
 clf = joblib.load("placement_model.pkl")
