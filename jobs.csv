@@ -1,0 +1,31 @@
+job_id,job_role,required_level,required_skills,company_type,salary_min_lpa,salary_max_lpa,location
+J101,Junior Software Developer,Beginner,Python,Startup,3,5,India
+J102,Technical Support Engineer,Beginner,Communication,Service Company,2.5,4,India
+J103,Web Development Trainee,Beginner,HTML CSS,Startup,3,4.5,India
+J104,Junior Java Developer,Beginner,Java,IT Company,3.5,5,India
+J105,QA Trainee,Beginner,Testing,Service Company,3,4.5,India
+J106,Data Entry Analyst,Beginner,Excel,Service Company,2,3.5,India
+J107,IT Support Executive,Beginner,Networking,Service Company,2.5,4,India
+J108,Python Trainee,Beginner,Python,Startup,3,5,India
+J109,Junior Analyst,Beginner,Aptitude,Consulting Firm,3,5,India
+J110,Associate Engineer,Beginner,Programming,IT Company,3.5,5.5,India
+J201,Python Developer,Intermediate,Python DSA,Product Company,6,9,India
+J202,Data Analyst,Intermediate,SQL Python,Service Company,5,8,India
+J203,Software Test Engineer,Intermediate,Automation Testing,IT Company,4.5,7,India
+J204,Java Developer,Intermediate,Java Spring,Product Company,6,10,India
+J205,Web Developer,Intermediate,JavaScript React,Startup,5.5,9,India
+J206,System Engineer,Intermediate,OS Networking,Service Company,5,8,India
+J207,Business Analyst,Intermediate,Data Analysis,Aggressive Startup,6,9,India
+J208,Cloud Support Engineer,Intermediate,AWS Linux,Service Company,6,9,India
+J209,ML Associate,Intermediate,Python ML,Startup,6,10,India
+J210,DevOps Engineer,Intermediate,Docker CI/CD,Product Company,7,11,India
+J301,Machine Learning Engineer,Advanced,Python ML,Product Company,10,18,India
+J302,Full Stack Developer,Advanced,React Node,Startup,9,15,India
+J303,Data Scientist,Advanced,Python ML Statistics,Product Company,12,20,India
+J304,Senior Software Engineer,Advanced,DSA System Design,Product Company,14,22,India
+J305,Cloud Architect,Advanced,AWS Azure,Product Company,15,25,India
+J306,DevOps Lead,Advanced,Kubernetes CI/CD,Product Company,14,22,India
+J307,AI Research Engineer,Advanced,Deep Learning,Research Org,12,20,India
+J308,Big Data Engineer,Advanced,Spark Hadoop,Product Company,11,18,India
+J309,Blockchain Developer,Advanced,Solidity Web3,Startup,10,18,India
+J310,Technical Lead,Advanced,System Design Leadership,Product Company,16,28,India
