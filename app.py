@@ -12,13 +12,56 @@ if "page" not in st.session_state:
 
 if "profile" not in st.session_state:
     st.session_state.profile = None
-
 # ---------------- LANDING PAGE ----------------
 if st.session_state.page == "landing":
-    st.image("assets/landing.png", use_column_width=True)
 
-    col1, col2, col3 = st.columns([3, 2, 3])
+    st.markdown(
+        """
+        <style>
+        .landing-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+        .landing-container img {
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+        }
+        .join-btn {
+            position: absolute;
+            top: 50%;
+            right: 8%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            padding: 12px 28px;
+            border-radius: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .join-btn:hover {
+            background-color: #45a049;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        f"""
+        <div class="landing-container">
+            <img src="data:image/png;base64,{st.image('assets/landing.png', use_column_width=True)}">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Button (Streamlit way, aligned to right)
+    col1, col2, col3 = st.columns([6, 1.5, 0.5])
     with col2:
+        st.markdown("<br><br><br><br>", unsafe_allow_html=True)
         if st.button("🌱 Join Us"):
             st.session_state.page = "main"
             st.rerun()
