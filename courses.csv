@@ -1,0 +1,31 @@
+course_id,course_name,platform,level,skill_domain,duration,free_or_paid,course_link
+C101,Python Basics,Coursera,Beginner,Python,4 weeks,Free,https://example.com
+C102,Introduction to Programming,edX,Beginner,Programming,5 weeks,Free,https://example.com
+C103,Aptitude Fundamentals,YouTube,Beginner,Aptitude,3 weeks,Free,https://example.com
+C104,HTML and CSS Basics,Udemy,Beginner,Web Development,2 weeks,Paid,https://example.com
+C105,Java for Beginners,Coursera,Beginner,Java,4 weeks,Free,https://example.com
+C106,Excel Basics for Students,Microsoft Learn,Beginner,Tools,3 weeks,Free,https://example.com
+C107,Communication Skills Basics,LinkedIn Learning,Beginner,Communication,3 weeks,Paid,https://example.com
+C108,C Programming Basics,NPTEL,Beginner,C Programming,6 weeks,Free,https://example.com
+C109,Problem Solving Basics,Unacademy,Beginner,Aptitude,4 weeks,Free,https://example.com
+C110,Introduction to Databases,edX,Beginner,Database,4 weeks,Free,https://example.com
+C201,Data Structures using Python,Udemy,Intermediate,DSA,6 weeks,Paid,https://example.com
+C202,Intermediate Machine Learning,Coursera,Intermediate,Machine Learning,5 weeks,Free,https://example.com
+C203,SQL for Data Analysis,edX,Intermediate,Database,4 weeks,Free,https://example.com
+C204,Java OOP Concepts,Udemy,Intermediate,Java,5 weeks,Paid,https://example.com
+C205,Web Development with JavaScript,Coursera,Intermediate,Web Development,6 weeks,Free,https://example.com
+C206,Python Automation,Udemy,Intermediate,Python,4 weeks,Paid,https://example.com
+C207,Operating Systems Basics,NPTEL,Intermediate,OS,8 weeks,Free,https://example.com
+C208,Software Testing Fundamentals,Udemy,Intermediate,Testing,4 weeks,Paid,https://example.com
+C209,Intermediate Aptitude Practice,Unacademy,Intermediate,Aptitude,5 weeks,Free,https://example.com
+C210,Data Visualization with Python,edX,Intermediate,Data Science,4 weeks,Free,https://example.com
+C301,Advanced Machine Learning Projects,Coursera,Advanced,Machine Learning,8 weeks,Paid,https://example.com
+C302,System Design Basics,Scaler,Advanced,DSA,6 weeks,Paid,https://example.com
+C303,Full Stack Web Development,Udemy,Advanced,Web Development,10 weeks,Paid,https://example.com
+C304,Deep Learning Specialization,Coursera,Advanced,Deep Learning,12 weeks,Paid,https://example.com
+C305,Cloud Computing with AWS,Udemy,Advanced,Cloud,8 weeks,Paid,https://example.com
+C306,DevOps Essentials,edX,Advanced,DevOps,6 weeks,Free,https://example.com
+C307,Big Data Analytics,NPTEL,Advanced,Big Data,8 weeks,Free,https://example.com
+C308,Advanced Java Programming,Udemy,Advanced,Java,6 weeks,Paid,https://example.com
+C309,Competitive Programming Mastery,CodeChef,Advanced,DSA,10 weeks,Free,https://example.com
+C310,Interview Preparation Masterclass,Unacademy,Advanced,Placement Prep,4 weeks,Paid,https://example.com
