@@ -215,17 +215,14 @@ elif menu == "📚 Free Courses":
         }
         keywords = DOMAIN_KEYWORDS.get(domain, [])
         filtered = [
-               c for c in courses
-               if any(k in c.get("course_name", "").lower() for k in keywords)
+            c for c in courses
+            if isinstance(c, str) and any(k in c.lower() for k in keywords)
         ]
-
-        if not filtered:
-            st.warning("No courses found. Try another domain.")
+        if filtered:
+            for course in filtered[:10]:
+                st.markdown(f"### 🎓 {course}")
         else:
-            for c in filtered[:6]:
-                st.subheader(c.get("title", "Course"))
-                st.markdown(f"[Go to Course]({c.get('url', '#')})")
-                st.divider()
+            st.warning("No courses found. Try another domain.")
 
 
 # ---------------- JOBS ----------------
