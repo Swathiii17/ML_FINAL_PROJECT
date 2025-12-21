@@ -87,22 +87,39 @@ def recommendations(level, domain):
             "Apply for internships & jobs"
         ]
 # ---------------- COURSE API ----------------
-RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
+RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210
 
-def fetch_courses(domain):
-    url = "https://coursera-courses.p.rapidapi.com/courses"
+  def fetch_courses(domain):
+    url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_institution.php"
     headers = {
         "X-RapidAPI-Key": RAPID_API_KEY,
-        "X-RapidAPI-Host": "coursera-courses.p.rapidapi.com"
+        "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
     }
-    params = {"query": domain}
 
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers)
+    st.write(response.json())
+
     if response.status_code == 200:
-        return response.json().get("courses", [])
+        data = response.json()
+        return data if isinstance(data, list) else []
     else:
         return []
 
+# ---------------- JOB REQUIREMENTS ----------------
+JOB_REQUIREMENTS = {
+    "Software Engineer": {
+        "level": "Intermediate",
+        "skills": ["DSA", "OOPS", "Java / Python / C++", "Basic System Design"]
+    },
+    "Data Analyst": {
+        "level": "Beginner",
+        "skills": ["Python / Excel", "SQL", "Statistics", "Visualization"]
+    },
+    "ML Engineer": {
+        "level": "Expert",
+        "skills": ["ML Algorithms", "Python", "Deployment", "Data Processing"]
+    }
+}
 
 # ---------------- SIDEBAR ----------------
 user_name = st.session_state.profile["name"] if st.session_state.profile else "USER"
@@ -185,21 +202,26 @@ elif menu == "📚 Free Courses":
 
     domain = st.selectbox(
         "Select Domain",
-        ["Python", "DSA", "Machine Learning", "Data Science", "Web Development"]
+        ["Python", "Machine Learning", "Data Science", "Web", "AI"]
     )
 
     if st.button("🔍 Find Courses"):
         with st.spinner("Fetching real courses..."):
             courses = fetch_courses(domain)
 
-        if not courses:
+        filtered = [
+            c for c in courses
+            if domain.lower() in c.get("course_name", "").lower()
+        ]
+
+        if not filtered:
             st.warning("No courses found. Try another domain.")
         else:
-            for c in courses[:5]:
-                st.subheader(c.get("name", "Course Title"))
-                st.write("Platform: Coursera")
-                st.markdown(f"[Go to Course]({c.get('url', '#')})")
+            for c in filtered[:5]:
+                st.subheader(c.get("course_name", "Course"))
+                st.markdown(f"[Go to Course]({c.get('course_url', '#')})")
                 st.divider()
+
 
 # ---------------- JOBS ----------------
 elif menu == "💼 Job Entry Requirements":
