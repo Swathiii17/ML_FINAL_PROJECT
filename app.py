@@ -3,8 +3,27 @@ import numpy as np
 import joblib
 
 # ---------------- PAGE CONFIG ----------------
-st.set_page_config(page_title="VYNOX | Placement Readiness", layout="wide")
+st.set_page_config(
+    page_title="VYNOX",
+    layout="wide"
+)
+# Page navigation
+if "page" not in st.session_state:
+    st.session_state.page = "landing"
 
+# User profile
+if "profile" not in st.session_state:
+    st.session_state.profile = None
+#--------Landing page----
+if st.session_state.page == "landing":
+    st.image("assets/landing.png", use_column_width=True)
+
+    col1, col2, col3 = st.columns([3,2,3])
+    with col2:
+        if st.button("🌱 Join Us"):
+            st.session_state.page = "main"
+            st.rerun()
+            
 # ---------------- LOAD MODEL ----------------
 clf = joblib.load("placement_model.pkl")
 le_dsa = joblib.load("le_dsa.pkl")
@@ -149,24 +168,34 @@ JOB_REQUIREMENTS = {
 
 
 # ---------------- SIDEBAR MENU ----------------
-st.sidebar.image("assets/Gemini_Generated_Image_8dz04g8dz04g8dz0.png", width=120)
-menu = st.sidebar.radio(
-    "Navigation",
-    [
+if st.session_state.page == "main":
+  # ---------------- SIDEBAR MENU ----------------
+   user_name = (
+      st.session_state.profile.get("name", "USER")
+      if st.session_state.profile
+      else "USER"
+   )
+
+   st.sidebar.image("assets/1000061197.png", width=120)
+   st.sidebar.markdown(f"### 👋 Hey {user_name}!!")
+
+   menu = st.sidebar.radio(
+     "Navigation",
+      [
         "🏠 Home",
         "👤 Create Profile",
         "📊 Placement Readiness & Guidance",
         "📚 Free Courses",
         "💼 Job Entry Requirements",
         "ℹ️ About VYNOX"
-    ]
-)
+     ]
+    )
 
 # ---------------- HOME PAGE ----------------
 if menu == "🏠 Home":
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.image("assets/Gemini_Generated_Image_8dz04g8dz04g8dz0.png", width=220)
+        st.image("assets/1000061197.png", width=220)
     with col2:
         st.title("VYNOX")
         st.subheader("A Product-Based Company")
@@ -183,25 +212,46 @@ if menu == "🏠 Home":
 # ---------------- PROFILE PAGE ----------------
 elif menu == "👤 Create Profile":
     st.header("Student Profile")
+    name = st.text_input(
+    "Your Name",
+    value=st.session_state.profile["name"] if st.session_state.profile else ""
+   )
 
     with st.form("profile_form"):
         dsa_level = st.selectbox("DSA Level", ["Beginner", "Intermediate", "Advanced"])
         problem_count = st.number_input("Problems Solved", 0, 1000)
         language_count = st.number_input("Languages Known", 1, 10)
         cs_fundamentals = st.slider("CS Fundamentals (1-5)", 1, 5)
-        project_count = st.number_input("Projects Completed", 0, 10)
+        project_count = st.number_input("Projects Completed", 0, 100)
         major_project = st.selectbox("Major Project Completed?", ["No", "Yes"])
         github_quality = st.selectbox("GitHub Quality", ["Low", "Medium", "High"])
         domain_focus = st.selectbox("Domain Focus", ["Web", "ML", "Data", "Core"])
         communication = st.slider("Communication Skills (1-5)", 1, 5)
         resume_quality = st.slider("Resume Quality (1-5)", 1, 5)
-        mock_interviews = st.number_input("Mock Interviews Attended", 0, 20)
+        mock_interviews = st.number_input("Mock Interviews Attended", 0, 200)
         learning_consistency = st.slider("Learning Consistency (1-5)", 1, 5)
         self_awareness = st.slider("Self Awareness (1-5)", 1, 5)
 
         submit = st.form_submit_button("Save Profile")
 
         if submit:
+            st.session_state.profile = {
+               "name": name,
+               "dsa_level": dsa_level,
+               "problem_count": problem_count,
+               "language_count": language_count,
+               "cs_fundamentals": cs_fundamentals,
+               "project_count": project_count,
+               "major_project": major_project,
+               "github_quality": github_quality,
+               "domain_focus": domain_focus,
+               "communication": communication,
+               "resume_quality": resume_quality,
+               "mock_interviews": mock_interviews,
+               "learning_consistency": learning_consistency,
+               "self_awareness": self_awareness
+              }
+
             st.session_state.profile = {
                 "dsa_level": dsa_level,
                 "problem_count": problem_count,
@@ -284,5 +334,5 @@ elif menu == "ℹ️ About VYNOX":
     st.subheader("👥 Team Members")
     st.write("- **Swathika** – Team Lead")
     st.write("- **Vishwa** – Tech Lead")
-    st.write("- **Santhosh** – Designer")
+    st.write("- **Santhosh Kumar** – Designer")
 
