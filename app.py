@@ -88,18 +88,18 @@ def recommendations(level, domain):
         ]
 # ---------------- COURSE API ----------------
 RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
-def fetch_courses(domain):
-    url = "https://udemy-courses-coupon-code.p.rapidapi.com/api/udemy_course/"
+def fetch_courses():
+    url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_institution.php"
+
     headers = {
         "X-RapidAPI-Key": RAPID_API_KEY,
-        "X-RapidAPI-Host": "udemy-courses-coupon-code.p.rapidapi.com"
+        "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
     }
-    params = {"page": "1"}
 
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        return response.json().get("results", [])
+        return response.json()   # returns a LIST
     else:
         return []
 
