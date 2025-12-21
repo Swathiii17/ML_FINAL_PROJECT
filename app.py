@@ -88,8 +88,7 @@ def recommendations(level, domain):
         ]
 # ---------------- COURSE API ----------------
 RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
-
-  def fetch_courses(domain):
+def fetch_courses(domain):
     url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_institution.php"
     headers = {
         "X-RapidAPI-Key": RAPID_API_KEY,
