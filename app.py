@@ -89,18 +89,17 @@ def recommendations(level, domain):
 # ---------------- COURSE API ----------------
 RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
 def fetch_courses(domain):
-    url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_institution.php"
+    url = "https://udemy-courses-coupon-code.p.rapidapi.com/api/udemy_course/"
     headers = {
         "X-RapidAPI-Key": RAPID_API_KEY,
-        "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
+        "X-RapidAPI-Host": "udemy-courses-coupon-code.p.rapidapi.com"
     }
+    params = {"page": "1"}
 
-    response = requests.get(url, headers=headers)
-    st.write(response.json())
+    response = requests.get(url, headers=headers, params=params)
 
     if response.status_code == 200:
-        data = response.json()
-        return data if isinstance(data, list) else []
+        return response.json().get("results", [])
     else:
         return []
 
@@ -197,11 +196,11 @@ elif menu == "📊 Placement Readiness & Guidance":
 
 # ---------------- COURSES ----------------
 elif menu == "📚 Free Courses":
-    st.header("🎓 Free Courses (Coursera)")
+    st.header("🎓 Free Courses ")
 
     domain = st.selectbox(
         "Select Domain",
-        ["Python", "Machine Learning", "Data Science", "Web", "AI"]
+        ["Python", "Machine Learning", "Data Science", "Web Development"]
     )
 
     if st.button("🔍 Find Courses"):
@@ -210,15 +209,15 @@ elif menu == "📚 Free Courses":
 
         filtered = [
             c for c in courses
-            if domain.lower() in c.get("course_name", "").lower()
+            if domain.lower() in c.get("title", "").lower()
         ]
 
         if not filtered:
             st.warning("No courses found. Try another domain.")
         else:
             for c in filtered[:5]:
-                st.subheader(c.get("course_name", "Course"))
-                st.markdown(f"[Go to Course]({c.get('course_url', '#')})")
+                st.subheader(c.get("title", "Course"))
+                st.markdown(f"[Go to Course]({c.get('url', '#')})")
                 st.divider()
 
 
