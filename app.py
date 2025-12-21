@@ -15,16 +15,62 @@ if "profile" not in st.session_state:
 # ---------------- LANDING PAGE ----------------
 if st.session_state.page == "landing":
 
-    st.image("assets/landing.png", use_column_width=True)
+    st.markdown("""
+    <style>
+    .hero {
+        position: relative;
+        width: 100%;
+        height: 90vh;
+        background-image: url("assets/landing.png");
+        background-size: cover;
+        background-position: center;
+        border-radius: 12px;
+    }
 
-    # Overlay illusion using spacing
-    st.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
+    .hero-button {
+        position: absolute;
+        top: 40%;
+        right: 15%;
+    }
 
-    col1, col2, col3 = st.columns([6, 2, 2])
-    with col3:
-        if st.button("🌱 Join Us"):
-            st.session_state.page = "main"
-            st.rerun()
+    .hero-button button {
+        font-size: 20px;
+        padding: 14px 40px;
+        border-radius: 50px;
+        border: 2px solid white;
+        background: rgba(0,0,0,0.3);
+        color: white;
+        cursor: pointer;
+    }
+
+    .hero-button button:hover {
+        background: rgba(255,255,255,0.2);
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # HERO SECTION
+    st.markdown("""
+    <div class="hero">
+        <div class="hero-button">
+            <form method="post">
+                <button name="join">Join Us !!</button>
+            </form>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # CLICK HANDLER
+    if "join" in st.session_state:
+        st.session_state.page = "main"
+        st.rerun()
+
+    # fallback click (Streamlit limitation workaround)
+    if st.button("hidden_join", key="hidden_join", help=""):
+        st.session_state.page = "main"
+        st.rerun()
+
 
 # ---------------- LOAD MODEL ----------------
 clf = joblib.load("placement_model.pkl")
