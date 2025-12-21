@@ -206,18 +206,19 @@ elif menu == "📚 Free Courses":
     if st.button("🔍 Find Courses"):
         with st.spinner("Fetching real courses..."):
             courses = fetch_courses()
-
+            st.write(courses[:20])
         DOMAIN_KEYWORDS = {
-            "Python": ["python"],
-            "Machine Learning": ["machine learning", "ml", "ai", "deep learning"],
-            "Data Science": ["data", "data science", "analytics"],
-            "Web Development": ["web", "html", "css", "javascript", "react"]
+                  "Machine Learning": ["machine learning", "ml", "deep learning", "ai"],
+                  "Web Development": ["web", "html", "css", "javascript", "frontend", "backend"],
+                  "Python": ["python", "django", "flask", "pandas"],
+                  "Data Science": ["data", "data science", "data analysis", "analytics"]
         }
         keywords = DOMAIN_KEYWORDS.get(domain, [])
         filtered = [
             c for c in courses
-            if isinstance(c, str) and any(k in c.lower() for k in keywords)
+            if any(k in c.lower() for k in keywords)
         ]
+
         if filtered:
             for course in filtered[:10]:
                 st.markdown(f"### 🎓 {course}")
