@@ -3,30 +3,17 @@ import numpy as np
 import joblib
 
 # ---------------- PAGE CONFIG ----------------
-st.set_page_config(page_title="VYNOX", layout="wide")
+st.set_page_config(
+    page_title="VYNOX",
+    layout="wide"
+)
 
 # ---------------- SESSION STATE ----------------
 if "page" not in st.session_state:
-    st.session_state.page = "landing"
+    st.session_state.page = "home"  # directly go to home
 
 if "profile" not in st.session_state:
     st.session_state.profile = None
-
-# ---------------- LANDING PAGE ----------------
-if st.session_state.page == "landing":
-    st.title("🚀 VYNOX")
-    st.subheader("AI-Driven Placement Readiness Platform")
-    st.write("Start preparing today with personalized guidance.")
-
-    st.markdown("<br><br>", unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns([3, 2, 3])
-    with col2:
-        if st.button("🌱 Join Us"):
-            st.session_state.page = "main"
-            st.rerun()
-
-    st.stop()
 
 # ---------------- LOAD MODEL ----------------
 clf = joblib.load("placement_model.pkl")
@@ -63,7 +50,6 @@ def predict_level(profile):
     score = int(np.max(clf.predict_proba(X)) * 100)
     level = le_target.inverse_transform([pred])[0]
     return level, score
-
 
 def recommendations(level, domain):
     if level == "Beginner":
@@ -142,9 +128,9 @@ menu = st.sidebar.radio(
 
 # ---------------- HOME ----------------
 if menu == "🏠 Home":
+    st.image("assets/logo.png", width=200)  # Logo at top
     st.title("VYNOX")
-    st.subheader("A Product-Based Company")
-    st.write("AI-powered platform for placement readiness & career guidance.")
+    st.subheader("AI-powered platform for placement readiness & career guidance.")
 
 # ---------------- PROFILE ----------------
 elif menu == "👤 Create Profile":
@@ -220,3 +206,4 @@ elif menu == "ℹ️ About VYNOX":
     st.subheader("About VYNOX")
     st.write("AI-powered career & placement guidance platform.")
     st.write("**Team:** Swathika (Lead), Vishwa (Tech), Santhosh Kumar (Design)")
+
