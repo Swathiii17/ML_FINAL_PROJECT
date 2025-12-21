@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import joblib
+import requests
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
@@ -85,30 +86,23 @@ def recommendations(level, domain):
             "System design practice",
             "Apply for internships & jobs"
         ]
+# ---------------- COURSE API ----------------
+RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
 
-# ---------------- DATA ----------------
-COURSES = [
-    {"title": "Python for Everybody", "platform": "Coursera", "domain": "Programming", "level": "Beginner", "link": "https://www.coursera.org/learn/python"},
-    {"title": "DSA Basics", "platform": "YouTube", "domain": "DSA", "level": "Beginner", "link": "https://www.youtube.com/watch?v=8hly31xKli0"},
-    {"title": "Operating Systems", "platform": "NPTEL", "domain": "CS Fundamentals", "level": "Intermediate", "link": "https://nptel.ac.in/courses/106"},
-    {"title": "Machine Learning", "platform": "Coursera", "domain": "ML", "level": "Intermediate", "link": "https://www.coursera.org/learn/machine-learning"},
-    {"title": "Deep Learning Specialization", "platform": "Coursera", "domain": "ML", "level": "Expert", "link": "https://www.coursera.org/specializations/deep-learning"}
-]
-
-JOB_REQUIREMENTS = {
-    "Software Engineer": {
-        "level": "Intermediate",
-        "skills": ["DSA", "OOPS", "Java / Python / C++", "Basic System Design"]
-    },
-    "Data Analyst": {
-        "level": "Beginner",
-        "skills": ["Python / Excel", "SQL", "Statistics", "Visualization"]
-    },
-    "ML Engineer": {
-        "level": "Expert",
-        "skills": ["ML Algorithms", "Python", "Deployment", "Data Processing"]
+def fetch_courses(domain):
+    url = "https://coursera-courses.p.rapidapi.com/courses"
+    headers = {
+        "X-RapidAPI-Key": RAPID_API_KEY,
+        "X-RapidAPI-Host": "coursera-courses.p.rapidapi.com"
     }
-}
+    params = {"query": domain}
+
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json().get("courses", [])
+    else:
+        return []
+
 
 # ---------------- SIDEBAR ----------------
 user_name = st.session_state.profile["name"] if st.session_state.profile else "USER"
@@ -187,11 +181,25 @@ elif menu == "📊 Placement Readiness & Guidance":
 
 # ---------------- COURSES ----------------
 elif menu == "📚 Free Courses":
-    for c in COURSES:
-        st.subheader(c["title"])
-        st.write(c["platform"], "|", c["domain"], "|", c["level"])
-        st.markdown(f"[Go to Course]({c['link']})")
-        st.divider()
+    st.header("🎓 Free Courses (Coursera)")
+
+    domain = st.selectbox(
+        "Select Domain",
+        ["Python", "DSA", "Machine Learning", "Data Science", "Web Development"]
+    )
+
+    if st.button("🔍 Find Courses"):
+        with st.spinner("Fetching real courses..."):
+            courses = fetch_courses(domain)
+
+        if not courses:
+            st.warning("No courses found. Try another domain.")
+        else:
+            for c in courses[:5]:
+                st.subheader(c.get("name", "Course Title"))
+                st.write("Platform: Coursera")
+                st.markdown(f"[Go to Course]({c.get('url', '#')})")
+                st.divider()
 
 # ---------------- JOBS ----------------
 elif menu == "💼 Job Entry Requirements":
