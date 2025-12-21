@@ -196,7 +196,7 @@ elif menu == "📊 Placement Readiness & Guidance":
 
 # ---------------- COURSES ----------------
 elif menu == "📚 Free Courses":
-    st.header("🎓 Free Courses ")
+    st.header("🎓 Free Courses")
 
     domain = st.selectbox(
         "Select Domain",
@@ -207,15 +207,24 @@ elif menu == "📚 Free Courses":
         with st.spinner("Fetching real courses..."):
             courses = fetch_courses(domain)
 
+        DOMAIN_KEYWORDS = {
+            "Python": ["python"],
+            "Machine Learning": ["machine learning", "ml", "ai", "deep learning"],
+            "Data Science": ["data", "data science", "analytics"],
+            "Web Development": ["web", "html", "css", "javascript", "react"]
+        }
+
+        keywords = DOMAIN_KEYWORDS.get(domain, [])
+
         filtered = [
             c for c in courses
-            if domain.lower() in c.get("title", "").lower()
+            if any(k in c.get("title", "").lower() for k in keywords)
         ]
 
         if not filtered:
             st.warning("No courses found. Try another domain.")
         else:
-            for c in filtered[:5]:
+            for c in filtered[:6]:
                 st.subheader(c.get("title", "Course"))
                 st.markdown(f"[Go to Course]({c.get('url', '#')})")
                 st.divider()
