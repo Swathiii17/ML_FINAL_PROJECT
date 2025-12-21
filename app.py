@@ -1,29 +1,28 @@
 import streamlit as st
 import numpy as np
+import pandas as pd
 import joblib
 
 # ---------------- PAGE CONFIG ----------------
-st.set_page_config(
-    page_title="VYNOX",
-    layout="wide"
-)
-# Page navigation
+st.set_page_config(page_title="VYNOX", layout="wide")
+
+# ---------------- SESSION STATE ----------------
 if "page" not in st.session_state:
     st.session_state.page = "landing"
 
-# User profile
 if "profile" not in st.session_state:
     st.session_state.profile = None
-#--------Landing page----
+
+# ---------------- LANDING PAGE ----------------
 if st.session_state.page == "landing":
     st.image("assets/landing.png", use_column_width=True)
 
-    col1, col2, col3 = st.columns([3,2,3])
+    col1, col2, col3 = st.columns([3, 2, 3])
     with col2:
         if st.button("🌱 Join Us"):
             st.session_state.page = "main"
             st.rerun()
-            
+
 # ---------------- LOAD MODEL ----------------
 clf = joblib.load("placement_model.pkl")
 le_dsa = joblib.load("le_dsa.pkl")
@@ -32,22 +31,21 @@ le_github = joblib.load("le_github.pkl")
 le_domain = joblib.load("le_domain.pkl")
 le_target = joblib.load("le_target.pkl")
 
+# ---------------- LOAD DATASETS ----------------
+courses_df = pd.read_csv("courses.csv")
+jobs_df = pd.read_csv("jobs.csv")
+
 # ---------------- FUNCTIONS ----------------
 def predict_level(profile):
-    dsa = le_dsa.transform([profile['dsa_level']])[0]
-    major = le_major.transform([profile['major_project']])[0]
-    github = le_github.transform([profile['github_quality']])[0]
-    domain = le_domain.transform([profile['domain_focus']])[0]
-
     X = np.array([
-        dsa,
+        le_dsa.transform([profile['dsa_level']])[0],
         profile['problem_count'],
         profile['language_count'],
         profile['cs_fundamentals'],
         profile['project_count'],
-        major,
-        github,
-        domain,
+        le_major.transform([profile['major_project']])[0],
+        le_github.transform([profile['github_quality']])[0],
+        le_domain.transform([profile['domain_focus']])[0],
         profile['communication'],
         profile['resume_quality'],
         profile['mock_interviews'],
@@ -61,163 +59,56 @@ def predict_level(profile):
     return level, score
 
 
-def recommendations(level, domain):
-    if level == "Beginner":
-        return [
-            "Learn programming fundamentals (Python / Java)",
-            "Start DSA basics",
-            "Study OS, DBMS, CN fundamentals",
-            "Practice 5 DSA problems daily"
-        ]
-    elif level == "Intermediate":
-        projects = {
-            "Web": "Job Portal / Portfolio Website",
-            "ML": "Student Placement Prediction System",
-            "Data": "Student Performance Analysis",
-            "Core": "CPU Scheduling Simulator"
-        }
-        return [
-            f"Focus on {domain} domain",
-            projects[domain],
-            "Improve GitHub and Resume",
-            "Start mock interviews"
-        ]
-    else:
-        advanced = {
-            "Web": "Full Stack E-commerce Platform",
-            "ML": "AI Interview Bot / Recommendation System",
-            "Data": "Predictive Analytics System",
-            "Core": "OS Performance Optimization"
-        }
-        return [
-            advanced[domain],
-            "Company-specific interview preparation",
-            "System design practice",
-            "Apply for internships & jobs"
-        ]
-
-COURSES = [
-    {
-        "title": "Python for Everybody",
-        "platform": "Coursera",
-        "domain": "Programming",
-        "level": "Beginner",
-        "link": "https://www.coursera.org/learn/python"
-    },
-    {
-        "title": "DSA Basics",
-        "platform": "YouTube (FreeCodeCamp)",
-        "domain": "DSA",
-        "level": "Beginner",
-        "link": "https://www.youtube.com/watch?v=8hly31xKli0"
-    },
-    {
-        "title": "Operating Systems",
-        "platform": "NPTEL",
-        "domain": "CS Fundamentals",
-        "level": "Intermediate",
-        "link": "https://nptel.ac.in/courses/106"
-    },
-    {
-        "title": "Machine Learning",
-        "platform": "Coursera",
-        "domain": "ML",
-        "level": "Intermediate",
-        "link": "https://www.coursera.org/learn/machine-learning"
-    },
-    {
-        "title": "Deep Learning Specialization",
-        "platform": "Coursera",
-        "domain": "ML",
-        "level": "Expert",
-        "link": "https://www.coursera.org/specializations/deep-learning"
-    }
-]
+def recommend_courses(level):
+    return courses_df[courses_df["level"] == level]
 
 
-
-JOB_REQUIREMENTS = {
-    "Software Engineer": {
-        "level": "Intermediate",
-        "skills": [
-            "DSA (Arrays, Trees, Graphs)",
-            "OOPS",
-            "One programming language (Java / Python / C++)",
-            "Basic System Design"
-        ]
-    },
-    "Data Analyst": {
-        "level": "Beginner",
-        "skills": [
-            "Python / Excel",
-            "SQL",
-            "Data Visualization",
-            "Statistics basics"
-        ]
-    },
-    "ML Engineer": {
-        "level": "Expert",
-        "skills": [
-            "Machine Learning algorithms",
-            "Python & Libraries",
-            "Model deployment",
-            "Data preprocessing"
-        ]
-    }
-}
+def recommend_jobs(level):
+    return jobs_df[jobs_df["required_level"] == level]
 
 
-# ---------------- SIDEBAR MENU ----------------
+# ---------------- MAIN APP ----------------
 if st.session_state.page == "main":
-  # ---------------- SIDEBAR MENU ----------------
-   user_name = (
-      st.session_state.profile.get("name", "USER")
-      if st.session_state.profile
-      else "USER"
-   )
 
-   st.sidebar.image("assets/1000061197.png", width=120)
-   st.sidebar.markdown(f"### 👋 Hey {user_name}!!")
+    user_name = st.session_state.profile.get("name", "USER") if st.session_state.profile else "USER"
 
-   menu = st.sidebar.radio(
-     "Navigation",
-      [
-        "🏠 Home",
-        "👤 Create Profile",
-        "📊 Placement Readiness & Guidance",
-        "📚 Free Courses",
-        "💼 Job Entry Requirements",
-        "ℹ️ About VYNOX"
-     ]
+    st.sidebar.image("assets/1000061197.png", width=120)
+    st.sidebar.markdown(f"### 👋 Hey {user_name}!!")
+
+    menu = st.sidebar.radio(
+        "Navigation",
+        [
+            "🏠 Home",
+            "👤 Create Profile",
+            "📊 Placement Readiness & Guidance",
+            "📚 Courses Recommendation",
+            "💼 Job Opportunities",
+            "ℹ️ About VYNOX"
+        ]
     )
 
-# ---------------- HOME PAGE ----------------
+# ---------------- HOME ----------------
 if menu == "🏠 Home":
     col1, col2 = st.columns([1, 2])
     with col1:
         st.image("assets/1000061197.png", width=220)
     with col2:
         st.title("VYNOX")
-        st.subheader("A Product-Based Company")
+        st.subheader("AI-Driven Placement Readiness Platform")
         st.write(
             """
-            **VYNOX** is a product-based company focused on empowering students 
-            with AI-driven career and placement guidance.
-
-            Our platform analyzes student skills, predicts placement readiness,
-            and provides personalized learning, project, and job recommendations.
+            **VYNOX** analyzes student skills using Machine Learning,
+            predicts placement readiness, and recommends
+            personalized courses and job opportunities.
             """
         )
 
-# ---------------- PROFILE PAGE ----------------
+# ---------------- PROFILE ----------------
 elif menu == "👤 Create Profile":
-    st.header("Student Profile")
-    name = st.text_input(
-    "Your Name",
-    value=st.session_state.profile["name"] if st.session_state.profile else ""
-   )
+    st.header("👤 Student Profile")
 
     with st.form("profile_form"):
+        name = st.text_input("Your Name")
         dsa_level = st.selectbox("DSA Level", ["Beginner", "Intermediate", "Advanced"])
         problem_count = st.number_input("Problems Solved", 0, 1000)
         language_count = st.number_input("Languages Known", 1, 10)
@@ -232,27 +123,9 @@ elif menu == "👤 Create Profile":
         learning_consistency = st.slider("Learning Consistency (1-5)", 1, 5)
         self_awareness = st.slider("Self Awareness (1-5)", 1, 5)
 
-        submit = st.form_submit_button("Save Profile")
-
-        if submit:
+        if st.form_submit_button("Save Profile"):
             st.session_state.profile = {
-               "name": name,
-               "dsa_level": dsa_level,
-               "problem_count": problem_count,
-               "language_count": language_count,
-               "cs_fundamentals": cs_fundamentals,
-               "project_count": project_count,
-               "major_project": major_project,
-               "github_quality": github_quality,
-               "domain_focus": domain_focus,
-               "communication": communication,
-               "resume_quality": resume_quality,
-               "mock_interviews": mock_interviews,
-               "learning_consistency": learning_consistency,
-               "self_awareness": self_awareness
-              }
-
-            st.session_state.profile = {
+                "name": name,
                 "dsa_level": dsa_level,
                 "problem_count": problem_count,
                 "language_count": language_count,
@@ -267,72 +140,57 @@ elif menu == "👤 Create Profile":
                 "learning_consistency": learning_consistency,
                 "self_awareness": self_awareness
             }
-            st.success("Profile saved successfully")
+            st.success("✅ Profile saved successfully")
 
-# ---------------- PLACEMENT READINESS and guidance----------------
+# ---------------- READINESS ----------------
 elif menu == "📊 Placement Readiness & Guidance":
-    if "profile" not in st.session_state:
+    if not st.session_state.profile:
         st.warning("⚠️ Please create your profile first")
     else:
-        profile = st.session_state.profile
-        level, score = predict_level(profile)
+        level, score = predict_level(st.session_state.profile)
 
         st.header("📊 Placement Readiness Result")
-        st.subheader(f"Level: **{level}**")
-        st.progress(score)
-        st.write(f"Readiness Score: **{score}%**")
+        st.metric("Readiness Score", f"{score}%")
+        st.progress(score / 100)
+        st.success(f"Level: **{level}**")
 
-        st.divider()
+# ---------------- COURSES ----------------
+elif menu == "📚 Courses Recommendation":
+    if not st.session_state.profile:
+        st.warning("⚠️ Create profile first")
+    else:
+        level, _ = predict_level(st.session_state.profile)
+        st.header("📚 Recommended Courses")
+        st.dataframe(
+            recommend_courses(level)[
+                ["course_name", "platform", "skill_domain", "duration", "free_or_paid"]
+            ],
+            use_container_width=True
+        )
 
-        st.header("💡 Personalized Guidance")
-        guidance = recommendations(level, profile["domain_focus"])
-        for g in guidance:
-            st.write("✔️", g)
-
-# ---------------- Online courses----------------
-elif menu == "📚 Free Courses":
-    st.header("📚 Free & Efficient Online Courses")
-
-    search = st.text_input("🔍 Search course (title / domain / level)")
-    domain_filter = st.selectbox("Filter by Domain", ["All", "Programming", "DSA", "ML", "CS Fundamentals"])
-    level_filter = st.selectbox("Filter by Level", ["All", "Beginner", "Intermediate", "Expert"])
-
-    for course in COURSES:
-        text = f"{course['title']} {course['domain']} {course['level']}".lower()
-
-        if search.lower() not in text:
-            continue
-        if domain_filter != "All" and course["domain"] != domain_filter:
-            continue
-        if level_filter != "All" and course["level"] != level_filter:
-            continue
-
-        st.subheader(course["title"])
-        st.write(f"📌 Platform: {course['platform']}")
-        st.write(f"🎯 Domain: {course['domain']}")
-        st.write(f"📈 Level: {course['level']}")
-        st.markdown(f"[🔗 Go to Course]({course['link']})")
-        st.divider()
-
-# ---------------- Job----------------
-elif menu == "💼 Job Entry Requirements":
-    st.header("💼 Job Entry & Requirement Guide")
-
-    for job, info in JOB_REQUIREMENTS.items():
-        st.subheader(job)
-        st.write(f"🎯 Minimum Level Required: **{info['level']}**")
-        st.write("🛠 Required Skills:")
-        for skill in info["skills"]:
-            st.write("•", skill)
-        st.divider()
+# ---------------- JOBS ----------------
+elif menu == "💼 Job Opportunities":
+    if not st.session_state.profile:
+        st.warning("⚠️ Create profile first")
+    else:
+        level, _ = predict_level(st.session_state.profile)
+        st.header("💼 Job Opportunities & Salary")
+        st.dataframe(
+            recommend_jobs(level)[
+                ["job_role", "company_type", "salary_min_lpa", "salary_max_lpa", "location"]
+            ],
+            use_container_width=True
+        )
 
 # ---------------- ABOUT ----------------
 elif menu == "ℹ️ About VYNOX":
-    st.header("About VYNOX")
-    st.write("**VYNOX** is a product-based company building intelligent career solutions for students.")
+    st.header("ℹ️ About VYNOX")
+    st.write(
+        "**VYNOX** is an AI-powered placement readiness platform designed to guide students "
+        "from skill assessment to job opportunities."
+    )
 
     st.subheader("👥 Team Members")
-    st.write("- **Swathika** – Team Lead")
-    st.write("- **Vishwa** – Tech Lead")
-    st.write("- **Santhosh Kumar** – Designer")
-
+    st.write("• **Swathika** – Team Lead")
+    st.write("• **Vishwa** – Technical Lead")
+    st.write("• **Santhosh Kumar** – UI/UX Designer")
