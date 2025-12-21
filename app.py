@@ -205,7 +205,7 @@ elif menu == "📚 Free Courses":
 
     if st.button("🔍 Find Courses"):
         with st.spinner("Fetching real courses..."):
-            courses = fetch_courses(domain)
+            courses = fetch_courses()
 
         DOMAIN_KEYWORDS = {
             "Python": ["python"],
@@ -213,12 +213,10 @@ elif menu == "📚 Free Courses":
             "Data Science": ["data", "data science", "analytics"],
             "Web Development": ["web", "html", "css", "javascript", "react"]
         }
-
         keywords = DOMAIN_KEYWORDS.get(domain, [])
-
         filtered = [
-            c for c in courses
-            if any(k in c.get("title", "").lower() for k in keywords)
+               c for c in courses
+               if any(k in c.get("course_name", "").lower() for k in keywords)
         ]
 
         if not filtered:
