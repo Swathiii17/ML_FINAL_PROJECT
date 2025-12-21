@@ -68,9 +68,14 @@ def recommend_jobs(level):
 
 
 # ---------------- MAIN APP ----------------
+# ---------------- MAIN APP ----------------
 if st.session_state.page == "main":
 
-    user_name = st.session_state.profile.get("name", "USER") if st.session_state.profile else "USER"
+    user_name = (
+        st.session_state.profile.get("name", "USER")
+        if st.session_state.profile
+        else "USER"
+    )
 
     st.sidebar.image("assets/1000061197.png", width=120)
     st.sidebar.markdown(f"### 👋 Hey {user_name}!!")
@@ -87,110 +92,98 @@ if st.session_state.page == "main":
         ]
     )
 
-# ---------------- HOME ----------------
-if menu == "🏠 Home":
-    col1, col2 = st.columns([1, 2])
-    with col1:
-        st.image("assets/1000061197.png", width=220)
-    with col2:
-        st.title("VYNOX")
-        st.subheader("AI-Driven Placement Readiness Platform")
+    # ---------------- HOME ----------------
+    if menu == "🏠 Home":
+        col1, col2 = st.columns([1, 2])
+        with col1:
+            st.image("assets/1000061197.png", width=220)
+        with col2:
+            st.title("VYNOX")
+            st.subheader("AI-Driven Placement Readiness Platform")
+            st.write(
+                """
+                **VYNOX** analyzes student skills using Machine Learning,
+                predicts placement readiness, and recommends
+                personalized courses and job opportunities.
+                """
+            )
+
+    # ---------------- PROFILE ----------------
+    elif menu == "👤 Create Profile":
+        st.header("👤 Student Profile")
+
+        with st.form("profile_form"):
+            name = st.text_input("Your Name")
+            dsa_level = st.selectbox("DSA Level", ["Beginner", "Intermediate", "Advanced"])
+            problem_count = st.number_input("Problems Solved", 0, 1000)
+            language_count = st.number_input("Languages Known", 1, 10)
+            cs_fundamentals = st.slider("CS Fundamentals (1-5)", 1, 5)
+            project_count = st.number_input("Projects Completed", 0, 100)
+            major_project = st.selectbox("Major Project Completed?", ["No", "Yes"])
+            github_quality = st.selectbox("GitHub Quality", ["Low", "Medium", "High"])
+            domain_focus = st.selectbox("Domain Focus", ["Web", "ML", "Data", "Core"])
+            communication = st.slider("Communication Skills (1-5)", 1, 5)
+            resume_quality = st.slider("Resume Quality (1-5)", 1, 5)
+            mock_interviews = st.number_input("Mock Interviews Attended", 0, 200)
+            learning_consistency = st.slider("Learning Consistency (1-5)", 1, 5)
+            self_awareness = st.slider("Self Awareness (1-5)", 1, 5)
+
+            if st.form_submit_button("Save Profile"):
+                st.session_state.profile = {
+                    "name": name,
+                    "dsa_level": dsa_level,
+                    "problem_count": problem_count,
+                    "language_count": language_count,
+                    "cs_fundamentals": cs_fundamentals,
+                    "project_count": project_count,
+                    "major_project": major_project,
+                    "github_quality": github_quality,
+                    "domain_focus": domain_focus,
+                    "communication": communication,
+                    "resume_quality": resume_quality,
+                    "mock_interviews": mock_interviews,
+                    "learning_consistency": learning_consistency,
+                    "self_awareness": self_awareness
+                }
+                st.success("✅ Profile saved successfully")
+
+    # ---------------- READINESS ----------------
+    elif menu == "📊 Placement Readiness & Guidance":
+        if not st.session_state.profile:
+            st.warning("⚠️ Please create your profile first")
+        else:
+            level, score = predict_level(st.session_state.profile)
+            st.metric("Readiness Score", f"{score}%")
+            st.progress(score / 100)
+            st.success(f"Level: **{level}**")
+
+    # ---------------- COURSES ----------------
+    elif menu == "📚 Courses Recommendation":
+        if not st.session_state.profile:
+            st.warning("⚠️ Create profile first")
+        else:
+            level, _ = predict_level(st.session_state.profile)
+            st.dataframe(
+                recommend_courses(level),
+                use_container_width=True
+            )
+
+    # ---------------- JOBS ----------------
+    elif menu == "💼 Job Opportunities":
+        if not st.session_state.profile:
+            st.warning("⚠️ Create profile first")
+        else:
+            level, _ = predict_level(st.session_state.profile)
+            st.dataframe(
+                recommend_jobs(level),
+                use_container_width=True
+            )
+
+    # ---------------- ABOUT ----------------
+    elif menu == "ℹ️ About VYNOX":
+        st.header("ℹ️ About VYNOX")
         st.write(
-            """
-            **VYNOX** analyzes student skills using Machine Learning,
-            predicts placement readiness, and recommends
-            personalized courses and job opportunities.
-            """
+            "**VYNOX** is an AI-powered placement readiness platform "
+            "for student career guidance."
         )
 
-# ---------------- PROFILE ----------------
-elif menu == "👤 Create Profile":
-    st.header("👤 Student Profile")
-
-    with st.form("profile_form"):
-        name = st.text_input("Your Name")
-        dsa_level = st.selectbox("DSA Level", ["Beginner", "Intermediate", "Advanced"])
-        problem_count = st.number_input("Problems Solved", 0, 1000)
-        language_count = st.number_input("Languages Known", 1, 10)
-        cs_fundamentals = st.slider("CS Fundamentals (1-5)", 1, 5)
-        project_count = st.number_input("Projects Completed", 0, 100)
-        major_project = st.selectbox("Major Project Completed?", ["No", "Yes"])
-        github_quality = st.selectbox("GitHub Quality", ["Low", "Medium", "High"])
-        domain_focus = st.selectbox("Domain Focus", ["Web", "ML", "Data", "Core"])
-        communication = st.slider("Communication Skills (1-5)", 1, 5)
-        resume_quality = st.slider("Resume Quality (1-5)", 1, 5)
-        mock_interviews = st.number_input("Mock Interviews Attended", 0, 200)
-        learning_consistency = st.slider("Learning Consistency (1-5)", 1, 5)
-        self_awareness = st.slider("Self Awareness (1-5)", 1, 5)
-
-        if st.form_submit_button("Save Profile"):
-            st.session_state.profile = {
-                "name": name,
-                "dsa_level": dsa_level,
-                "problem_count": problem_count,
-                "language_count": language_count,
-                "cs_fundamentals": cs_fundamentals,
-                "project_count": project_count,
-                "major_project": major_project,
-                "github_quality": github_quality,
-                "domain_focus": domain_focus,
-                "communication": communication,
-                "resume_quality": resume_quality,
-                "mock_interviews": mock_interviews,
-                "learning_consistency": learning_consistency,
-                "self_awareness": self_awareness
-            }
-            st.success("✅ Profile saved successfully")
-
-# ---------------- READINESS ----------------
-elif menu == "📊 Placement Readiness & Guidance":
-    if not st.session_state.profile:
-        st.warning("⚠️ Please create your profile first")
-    else:
-        level, score = predict_level(st.session_state.profile)
-
-        st.header("📊 Placement Readiness Result")
-        st.metric("Readiness Score", f"{score}%")
-        st.progress(score / 100)
-        st.success(f"Level: **{level}**")
-
-# ---------------- COURSES ----------------
-elif menu == "📚 Courses Recommendation":
-    if not st.session_state.profile:
-        st.warning("⚠️ Create profile first")
-    else:
-        level, _ = predict_level(st.session_state.profile)
-        st.header("📚 Recommended Courses")
-        st.dataframe(
-            recommend_courses(level)[
-                ["course_name", "platform", "skill_domain", "duration", "free_or_paid"]
-            ],
-            use_container_width=True
-        )
-
-# ---------------- JOBS ----------------
-elif menu == "💼 Job Opportunities":
-    if not st.session_state.profile:
-        st.warning("⚠️ Create profile first")
-    else:
-        level, _ = predict_level(st.session_state.profile)
-        st.header("💼 Job Opportunities & Salary")
-        st.dataframe(
-            recommend_jobs(level)[
-                ["job_role", "company_type", "salary_min_lpa", "salary_max_lpa", "location"]
-            ],
-            use_container_width=True
-        )
-
-# ---------------- ABOUT ----------------
-elif menu == "ℹ️ About VYNOX":
-    st.header("ℹ️ About VYNOX")
-    st.write(
-        "**VYNOX** is an AI-powered placement readiness platform designed to guide students "
-        "from skill assessment to job opportunities."
-    )
-
-    st.subheader("👥 Team Members")
-    st.write("• **Swathika** – Team Lead")
-    st.write("• **Vishwa** – Technical Lead")
-    st.write("• **Santhosh Kumar** – UI/UX Designer")
