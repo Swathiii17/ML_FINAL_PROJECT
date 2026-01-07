@@ -11,7 +11,7 @@ courses_df = pd.read_csv('courses.csv')
 jobs_df = pd.read_csv('jobs.csv')
 
 # Load Models & Encoders
-joblib.dump(placement_model, './placement_model.pkl')
+placement_model = joblib.load('./placement_model.pkl')
 joblib.dump(le_domain, './le_domain.pkl')
 joblib.dump(le_dsa, './le_dsa.pkl')
 joblib.dump(le_github, './le_github.pkl')
