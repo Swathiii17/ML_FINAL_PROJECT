@@ -12,11 +12,11 @@ jobs_df = pd.read_csv('jobs.csv')
 
 # Load Models & Encoders
 placement_model = joblib.load('./placement_model.pkl')
-joblib.dump(le_domain, './le_domain.pkl')
-joblib.dump(le_dsa, './le_dsa.pkl')
-joblib.dump(le_github, './le_github.pkl')
-joblib.dump(le_major, './le_major.pkl')
-joblib.dump(le_target, './le_target.pkl')
+le_domain = joblib.load('./le_domain.pkl')
+le_dsa = joblib.load('./le_dsa.pkl')
+le_github = joblib.load('./le_github.pkl')
+le_major = joblib.load('./le_major.pkl')
+le_target = joblib.load('./le_target.pkl')
 
 # ---------------------------
 st.title("🎯 Placement Readiness Assessment")
