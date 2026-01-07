@@ -137,7 +137,7 @@ menu = st.sidebar.radio(
 
 # ---------------- HOME ----------------
 if menu == "🏠 Home":
-    st.image("assets/logo.png", width=200)  # Logo at top
+
     st.title("VYNOX")
     st.subheader("AI-powered platform for placement readiness & career guidance.")
 
