@@ -88,11 +88,15 @@ def recommendations(level, domain):
         ]
 
 # ---------------- COURSE API ----------------
+import streamlit as st
+import requests
+
+# Your RapidAPI Key
 RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
 
-# Function to fetch course providers from Coursera API
+# Function to fetch courses
 def fetch_courses():
-    url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_institution.php"
+    url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_courses.php"
 
     headers = {
         "X-RapidAPI-Key": RAPID_API_KEY,
@@ -102,30 +106,28 @@ def fetch_courses():
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        data = response.json()
-        # Optional: fix encoding issues
-        data = [p.replace("?", "è") for p in data]
-        return data
+        courses = response.json()  # This should return a list of course names
+        return courses
     else:
         st.error(f"Failed to fetch courses: {response.status_code}")
         return []
 
 # Streamlit app
-st.title("Coursera Course Providers")
+st.title("Coursera Courses")
 
-# Fetch providers
-course_providers = fetch_courses()
+# Fetch course list
+courses = fetch_courses()
 
-if course_providers:
-    # Display as dropdown
-    selected_provider = st.selectbox("Select a course provider:", course_providers)
-    st.write("You selected:", selected_provider)
+if courses:
+    # Show dropdown to select a course
+    selected_course = st.selectbox("Select a course:", courses)
+    st.write("You selected:", selected_course)
 
-    # Optional: Display all providers
-    st.subheader("All available providers:")
-    st.write(course_providers)
+    # Optional: show full list
+    st.subheader("All available courses:")
+    st.write(courses)
 else:
-    st.write("No course providers available.")
+    st.write("No courses available.")
 
 
 # ---------------- JOB REQUIREMENTS ----------------
