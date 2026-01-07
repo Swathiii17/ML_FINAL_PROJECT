@@ -86,8 +86,11 @@ def recommendations(level, domain):
             "System design practice",
             "Apply for internships & jobs"
         ]
+
 # ---------------- COURSE API ----------------
 RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
+
+# Function to fetch course providers from Coursera API
 def fetch_courses():
     url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_institution.php"
 
@@ -99,9 +102,31 @@ def fetch_courses():
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        return response.json()   # returns a LIST
+        data = response.json()
+        # Optional: fix encoding issues
+        data = [p.replace("?", "è") for p in data]
+        return data
     else:
+        st.error(f"Failed to fetch courses: {response.status_code}")
         return []
+
+# Streamlit app
+st.title("Coursera Course Providers")
+
+# Fetch providers
+course_providers = fetch_courses()
+
+if course_providers:
+    # Display as dropdown
+    selected_provider = st.selectbox("Select a course provider:", course_providers)
+    st.write("You selected:", selected_provider)
+
+    # Optional: Display all providers
+    st.subheader("All available providers:")
+    st.write(course_providers)
+else:
+    st.write("No course providers available.")
+
 
 # ---------------- JOB REQUIREMENTS ----------------
 JOB_REQUIREMENTS = {
