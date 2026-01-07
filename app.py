@@ -20,57 +20,46 @@ with col2:
         st.experimental_set_query_params(page="assessment")
         st.experimental_rerun()
 
-# HOW IT WORKS
+# HOW IT WORKS - Custom Replacement
 st.subheader("How It Works")
-c1, c2, c3 = st.columns(3)
 
-def card(title, text):
-    st.markdown(f"""
-    <div class="card">
-        <h4>{title}</h4>
-        <p>{text}</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-with c1:
-    card("🧠 Skill Assessment", "Answer placement-oriented questions.")
-with c2:
-    card("📊 Readiness Score", "AI evaluates your performance.")
-with c3:
-    card("📚 Learning Roadmap", "Get resources to improve weak areas.")
-
-# DOMAINS
-st.subheader("Explore Tech Domains")
-domains = [
-    ("🌐 Web Development", "Frontend & backend interview skills"),
-    ("📊 Data Science", "ML & statistics fundamentals"),
-    ("📱 Mobile Development", "Android & cross-platform basics"),
-    ("🔐 Cybersecurity", "SOC & analyst readiness"),
-    ("☁️ Cloud Engineering", "Cloud tools & concepts"),
-    ("⛓ Blockchain", "Core blockchain concepts")
+custom_workflow = [
+    ("📝 Take Assessment", "Answer placement-oriented questions designed by experts."),
+    ("📈 Get AI Score", "Receive a detailed placement readiness score."),
+    ("🎯 Personalized Roadmap", "Learn which skills to improve and which courses to take.")
 ]
 
-cols = st.columns(3)
-for i, d in enumerate(domains):
-    with cols[i % 3]:
-        card(d[0], d[1])
-
-# STATS
-st.markdown("---")
-s1, s2, s3, s4 = st.columns(4)
-stats = [
-    ("500+", "Questions Designed"),
-    ("8", "Career Domains"),
-    ("92%", "Model Confidence"),
-    ("85%", "Validation Accuracy")
-]
-
-for col, stat in zip([s1, s2, s3, s4], stats):
+cols = st.columns(len(custom_workflow))
+for col, wf in zip(cols, custom_workflow):
     with col:
         st.markdown(f"""
-        <div class="stat">
-            <h3>{stat[0]}</h3>
-            <p>{stat[1]}</p>
+        <div class="card">
+            <h4>{wf[0]}</h4>
+            <p>{wf[1]}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# EXPLORE TECH DOMAINS - Custom Replacement
+st.subheader("Explore Your Career Paths")
+
+custom_domains = [
+    ("🌐 Web Dev", "Frontend & backend fundamentals"),
+    ("🤖 AI & ML", "Machine Learning & AI basics"),
+    ("📱 App Development", "Mobile app development essentials"),
+    ("🔒 Cybersecurity", "Security & ethical hacking"),
+    ("☁️ Cloud Computing", "Cloud tools & services"),
+    ("⛓ Blockchain", "Blockchain fundamentals"),
+    ("🖥 Embedded Systems", "IoT & hardware interfacing"),
+    ("🎮 Game Development", "Game design & development")
+]
+
+cols = st.columns(4)  # 4 per row for better layout
+for i, domain in enumerate(custom_domains):
+    with cols[i % 4]:
+        st.markdown(f"""
+        <div class="card">
+            <h4>{domain[0]}</h4>
+            <p>{domain[1]}</p>
         </div>
         """, unsafe_allow_html=True)
 
