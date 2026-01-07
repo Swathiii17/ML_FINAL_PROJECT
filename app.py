@@ -6,7 +6,7 @@ st.set_page_config(page_title="VYNOX", layout="wide")
 with open("assets/style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# HERO
+# HERO SECTION
 st.markdown("""
 <div class="hero">
     <h1>Welcome to VYNOX</h1>
@@ -17,7 +17,8 @@ st.markdown("""
 col1, col2, col3 = st.columns([2,1,2])
 with col2:
     if st.button("🚀 Check Your Placement Readiness", use_container_width=True):
-        st.switch_page("pages/1_Assessment.py")
+        st.experimental_set_query_params(page="assessment")
+        st.experimental_rerun()
 
 # HOW IT WORKS
 st.subheader("How It Works")
@@ -57,7 +58,6 @@ for i, d in enumerate(domains):
 # STATS
 st.markdown("---")
 s1, s2, s3, s4 = st.columns(4)
-
 stats = [
     ("500+", "Questions Designed"),
     ("8", "Career Domains"),
@@ -73,3 +73,4 @@ for col, stat in zip([s1, s2, s3, s4], stats):
             <p>{stat[1]}</p>
         </div>
         """, unsafe_allow_html=True)
+
