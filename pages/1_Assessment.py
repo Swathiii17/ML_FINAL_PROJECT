@@ -1,35 +1,67 @@
 import streamlit as st
+import pandas as pd
+import pickle
 
-st.set_page_config(page_title="Assessment", layout="wide")
+st.set_page_config(page_title="Placement Assessment", layout="wide")
 
-st.title("🧠 Placement Readiness Assessment")
+# Load Data
+students_df = pd.read_csv('data/student_profiles.csv')
+courses_df = pd.read_csv('data/courses.csv')
+jobs_df = pd.read_csv('data/jobs.csv')
 
-questions = {
-    "Web Development": [
-        ("What does HTML stand for?", "Hyper Text Markup Language"),
-        ("What is CSS used for?", "Styling web pages")
-    ],
-    "Data Science": [
-        ("What is overfitting?", "Model performs well on training but poor on test"),
-        ("Mean of [2,4,6]?", "4")
-    ],
-}
+# Load Models & Encoders
+placement_model = pickle.load(open('models/placement_model.pkl','rb'))
+le_domain = pickle.load(open('models/le_domain.pkl','rb'))
+le_dsa = pickle.load(open('models/le_dsa.pkl','rb'))
+le_github = pickle.load(open('models/le_github.pkl','rb'))
+le_major = pickle.load(open('models/le_major.pkl','rb'))
+le_target = pickle.load(open('models/le_target.pkl','rb'))
 
-score = 0
-total = 0
+# ---------------------------
+st.title("🎯 Placement Readiness Assessment")
 
-for domain, qs in questions.items():
-    st.subheader(domain)
-    for q, ans in qs:
-        user = st.text_input(q)
-        if user:
-            total += 1
-            if ans.lower() in user.lower():
-                score += 1
+# Student selection
+st.sidebar.header("Select Your Profile")
+student_names = students_df['name'].tolist()
+selected_student = st.sidebar.selectbox("Choose your profile:", student_names)
+student_data = students_df[students_df['name'] == selected_student].iloc[0]
 
-if st.button("Submit Assessment"):
-    if total == 0:
-        st.warning("Answer at least one question.")
-    else:
-        st.session_state["score"] = int((score / total) * 100)
-        st.switch_page("pages/2_Dashboard.py")
+st.subheader(f"Welcome, {selected_student}!")
+st.write("### 📝 Your Profile")
+st.write(f"**Domain:** {student_data['domain']}")
+st.write(f"**DSA Skill:** {student_data['dsa']}")
+st.write(f"**GitHub Experience:** {student_data['github']}")
+st.write(f"**Major:** {student_data['major']}")
+st.write(f"**Target Company:** {student_data['target']}")
+
+# Update inputs
+st.subheader("Update Your Skills / Preferences")
+domain_input = st.selectbox("Domain", options=students_df['domain'].unique(), index=list(students_df['domain'].unique()).index(student_data['domain']))
+dsa_input = st.selectbox("DSA Skill Level", options=students_df['dsa'].unique(), index=list(students_df['dsa'].unique()).index(student_data['dsa']))
+github_input = st.selectbox("GitHub Experience", options=students_df['github'].unique(), index=list(students_df['github'].unique()).index(student_data['github']))
+major_input = st.selectbox("Major", options=students_df['major'].unique(), index=list(students_df['major'].unique()).index(student_data['major']))
+target_input = st.selectbox("Target Company", options=students_df['target'].unique(), index=list(students_df['target'].unique()).index(student_data['target']))
+
+# Encode
+features = [[
+    le_domain.transform([domain_input])[0],
+    le_dsa.transform([dsa_input])[0],
+    le_github.transform([github_input])[0],
+    le_major.transform([major_input])[0],
+    le_target.transform([target_input])[0]
+]]
+
+# Predict
+if st.button("Predict Readiness"):
+    readiness_score = placement_model.predict(features)[0]
+    st.success(f"Your predicted placement readiness score is: **{readiness_score}**")
+
+    # Recommend courses
+    st.subheader("📚 Recommended Courses")
+    recommended_courses = courses_df[(courses_df['domain']==domain_input)]
+    st.table(recommended_courses[['course_name','provider','duration']])
+
+    # Recommend jobs
+    st.subheader("💼 Suitable Job Openings")
+    recommended_jobs = jobs_df[jobs_df['required_domain']==domain_input]
+    st.table(recommended_jobs[['job_title','company','location','required_skills']])
