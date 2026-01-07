@@ -5,17 +5,17 @@ import pickle
 st.set_page_config(page_title="Placement Assessment", layout="wide")
 
 # Load Data
-students_df = pd.read_csv('data/student_profiles.csv')
-courses_df = pd.read_csv('data/courses.csv')
-jobs_df = pd.read_csv('data/jobs.csv')
+students_df = pd.read_csv('student_profiles.csv')
+courses_df = pd.read_csv('courses.csv')
+jobs_df = pd.read_csv('jobs.csv')
 
 # Load Models & Encoders
-placement_model = pickle.load(open('models/placement_model.pkl','rb'))
-le_domain = pickle.load(open('models/le_domain.pkl','rb'))
-le_dsa = pickle.load(open('models/le_dsa.pkl','rb'))
-le_github = pickle.load(open('models/le_github.pkl','rb'))
-le_major = pickle.load(open('models/le_major.pkl','rb'))
-le_target = pickle.load(open('models/le_target.pkl','rb'))
+placement_model = pickle.load(open('placement_model.pkl','rb'))
+le_domain = pickle.load(open('le_domain.pkl','rb'))
+le_dsa = pickle.load(open('le_dsa.pkl','rb'))
+le_github = pickle.load(open('le_github.pkl','rb'))
+le_major = pickle.load(open('le_major.pkl','rb'))
+le_target = pickle.load(open('le_target.pkl','rb'))
 
 # ---------------------------
 st.title("🎯 Placement Readiness Assessment")
