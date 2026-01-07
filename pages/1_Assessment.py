@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import pickle
+import joblib
 
 st.set_page_config(page_title="Placement Assessment", layout="wide")
 
@@ -10,12 +11,12 @@ courses_df = pd.read_csv('courses.csv')
 jobs_df = pd.read_csv('jobs.csv')
 
 # Load Models & Encoders
-placement_model = pickle.load(open('placement_model.pkl','rb'))
-le_domain = pickle.load(open('le_domain.pkl','rb'))
-le_dsa = pickle.load(open('le_dsa.pkl','rb'))
-le_github = pickle.load(open('le_github.pkl','rb'))
-le_major = pickle.load(open('le_major.pkl','rb'))
-le_target = pickle.load(open('le_target.pkl','rb'))
+joblib.dump(placement_model, 'placement_model.pkl')
+joblib.dump(le_domain, 'le_domain.pkl')
+joblib.dump(le_dsa, 'le_dsa.pkl')
+joblib.dump(le_github, 'le_github.pkl')
+joblib.dump(le_major, 'le_major.pkl')
+joblib.dump(le_target, 'le_target.pkl')
 
 # ---------------------------
 st.title("🎯 Placement Readiness Assessment")
