@@ -8,7 +8,7 @@ st.set_page_config(page_title="VYNOX", layout="wide")
 
 # ================= SESSION STATE =================
 if "profile" not in st.session_state:
-    st.session_state.profile = None
+    st.session_state["profile"] = None
 
 # ================= LOAD MODELS =================
 clf = joblib.load("placement_model.pkl")
@@ -106,7 +106,7 @@ if menu == "🏠 Home":
 elif menu == "👤 Create Profile":
     st.header("Create Your Profile")
 
-    with st.form("profile"):
+    with st.form("profile_form"):
         profile = {
             "name": st.text_input("Name"),
             "dsa_level": st.selectbox("DSA Level", ["Beginner", "Intermediate", "Advanced"]),
@@ -124,9 +124,12 @@ elif menu == "👤 Create Profile":
             "self_awareness": st.slider("Self Awareness", 1, 5)
         }
 
-        if st.form_submit_button("Save Profile"):
-            st.session_state.profile = profile
-            st.success("Profile Saved ✅")
+        submitted = st.form_submit_button("Save Profile")
+
+    if submitted:
+        st.session_state["profile"] = profile   # ✅ SAFE
+        st.success("Profile saved successfully ✅")
+
 
 # ================= PLACEMENT =================
 elif menu == "📊 Placement Readiness":
