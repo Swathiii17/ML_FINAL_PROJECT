@@ -3,20 +3,14 @@ import numpy as np
 import joblib
 import requests
 
-# ---------------- PAGE CONFIG ----------------
-st.set_page_config(
-    page_title="VYNOX",
-    layout="wide"
-)
+# ================= PAGE CONFIG =================
+st.set_page_config(page_title="VYNOX", layout="wide")
 
-# ---------------- SESSION STATE ----------------
-if "page" not in st.session_state:
-    st.session_state.page = "home"  # directly go to home
-
+# ================= SESSION STATE =================
 if "profile" not in st.session_state:
     st.session_state.profile = None
 
-# ---------------- LOAD MODEL ----------------
+# ================= LOAD MODELS =================
 clf = joblib.load("placement_model.pkl")
 le_dsa = joblib.load("le_dsa.pkl")
 le_major = joblib.load("le_major.pkl")
@@ -24,22 +18,21 @@ le_github = joblib.load("le_github.pkl")
 le_domain = joblib.load("le_domain.pkl")
 le_target = joblib.load("le_target.pkl")
 
-# ---------------- FUNCTIONS ----------------
-def predict_level(profile):
-    dsa = le_dsa.transform([profile["dsa_level"]])[0]
-    major = le_major.transform([profile["major_project"]])[0]
-    github = le_github.transform([profile["github_quality"]])[0]
-    domain = le_domain.transform([profile["domain_focus"]])[0]
+# ================= API KEYS =================
+RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
+FINDWORK_API_KEY = "YOUR_FINDWORK_API_KEY"   # free job API
 
+# ================= FUNCTIONS =================
+def predict_level(profile):
     X = np.array([
-        dsa,
+        le_dsa.transform([profile["dsa_level"]])[0],
         profile["problem_count"],
         profile["language_count"],
         profile["cs_fundamentals"],
         profile["project_count"],
-        major,
-        github,
-        domain,
+        le_major.transform([profile["major_project"]])[0],
+        le_github.transform([profile["github_quality"]])[0],
+        le_domain.transform([profile["domain_focus"]])[0],
         profile["communication"],
         profile["resume_quality"],
         profile["mock_interviews"],
@@ -49,220 +42,155 @@ def predict_level(profile):
 
     pred = clf.predict(X)[0]
     score = int(np.max(clf.predict_proba(X)) * 100)
-    level = le_target.inverse_transform([pred])[0]
-    return level, score
+    return le_target.inverse_transform([pred])[0], score
+
 
 def recommendations(level, domain):
-    if level == "Beginner":
-        return [
-            "Learn programming fundamentals (Python / Java)",
+    data = {
+        "Beginner": [
+            "Learn Python / Java fundamentals",
             "Start DSA basics",
-            "Study OS, DBMS, CN fundamentals",
-            "Practice 5 DSA problems daily"
-        ]
-    elif level == "Intermediate":
-        projects = {
-            "Web": "Job Portal / Portfolio Website",
-            "ML": "Student Placement Prediction System",
-            "Data": "Student Performance Analysis",
-            "Core": "CPU Scheduling Simulator"
-        }
-        return [
-            f"Focus on {domain} domain",
-            projects[domain],
-            "Improve GitHub and Resume",
+            "Study OS, DBMS, CN",
+            "Solve 5 problems daily"
+        ],
+        "Intermediate": [
+            f"Build projects in {domain}",
+            "Improve GitHub & Resume",
             "Start mock interviews"
-        ]
-    else:
-        advanced = {
-            "Web": "Full Stack E-commerce Platform",
-            "ML": "AI Interview Bot / Recommendation System",
-            "Data": "Predictive Analytics System",
-            "Core": "OS Performance Optimization"
-        }
-        return [
-            advanced[domain],
-            "Company-specific interview preparation",
-            "System design practice",
+        ],
+        "Expert": [
+            "Advanced projects",
+            "System Design",
             "Apply for internships & jobs"
         ]
+    }
+    return data[level]
 
-# ---------------- COURSE API ----------------
-import streamlit as st
-import requests
 
-# Your RapidAPI Key
-RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
-
-# Function to fetch courses
+# ================= COURSE API =================
 def fetch_courses():
     url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_courses.php"
-
     headers = {
         "X-RapidAPI-Key": RAPID_API_KEY,
         "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
     }
-
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        courses = response.json()  # This should return a list of course names
-        return courses
-    else:
-        st.error(f"Failed to fetch courses: {response.status_code}")
-        return []
-
-# Streamlit app
-  st.title("Coursera Courses")
-
-# Fetch course list
-  courses = fetch_courses()
-  if courses:
-    # Show dropdown to select a course
-     selected_course = st.selectbox("Select a course:", courses)
-     st.write("You selected:", selected_course)
-
-    # Optional: show full list
-     st.subheader("All available courses:")
-     st.write(courses)
-  else:
-     st.write("No courses available.")
+    res = requests.get(url, headers=headers)
+    return res.json() if res.status_code == 200 else []
 
 
-# ---------------- JOB REQUIREMENTS ----------------
-JOB_REQUIREMENTS = {
-    "Software Engineer": {
-        "level": "Intermediate",
-        "skills": ["DSA", "OOPS", "Java / Python / C++", "Basic System Design"]
-    },
-    "Data Analyst": {
-        "level": "Beginner",
-        "skills": ["Python / Excel", "SQL", "Statistics", "Visualization"]
-    },
-    "ML Engineer": {
-        "level": "Expert",
-        "skills": ["ML Algorithms", "Python", "Deployment", "Data Processing"]
-    }
-}
+# ================= JOB API =================
+def fetch_jobs(role):
+    url = f"https://findwork.dev/api/jobs/?search={role}"
+    headers = {"Authorization": f"Token {FINDWORK_API_KEY}"}
+    res = requests.get(url, headers=headers)
+    return res.json().get("results", []) if res.status_code == 200 else []
 
-# ---------------- SIDEBAR ----------------
-user_name = st.session_state.profile["name"] if st.session_state.profile else "USER"
 
-st.sidebar.markdown(f"### 👋 Hey {user_name}")
+# ================= SIDEBAR =================
+user = st.session_state.profile["name"] if st.session_state.profile else "User"
+st.sidebar.title("VYNOX 🚀")
+st.sidebar.markdown(f"👋 Hello **{user}**")
+
 menu = st.sidebar.radio(
     "Navigation",
-    [
-        "🏠 Home",
-        "👤 Create Profile",
-        "📊 Placement Readiness & Guidance",
-        "📚 Free Courses",
-        "💼 Job Entry Requirements",
-        "ℹ️ About VYNOX"
-    ]
+    ["🏠 Home", "👤 Create Profile", "📊 Placement Readiness",
+     "📚 Free Courses", "💼 Jobs", "ℹ️ About"]
 )
 
-# ---------------- HOME ----------------
+# ================= HOME =================
 if menu == "🏠 Home":
-
     st.title("VYNOX")
-    st.subheader("AI-powered platform for placement readiness & career guidance.")
+    st.subheader("AI-Powered Placement Readiness & Career Guidance Platform")
 
-# ---------------- PROFILE ----------------
+# ================= PROFILE =================
 elif menu == "👤 Create Profile":
-    st.header("Student Profile")
+    st.header("Create Your Profile")
 
-    with st.form("profile_form"):
-        name = st.text_input("Your Name")
-        dsa_level = st.selectbox("DSA Level", ["Beginner", "Intermediate", "Advanced"])
-        problem_count = st.number_input("Problems Solved", 0, 1000)
-        language_count = st.number_input("Languages Known", 1, 10)
-        cs_fundamentals = st.slider("CS Fundamentals (1-5)", 1, 5)
-        project_count = st.number_input("Projects Completed", 0, 100)
-        major_project = st.selectbox("Major Project Completed?", ["No", "Yes"])
-        github_quality = st.selectbox("GitHub Quality", ["Low", "Medium", "High"])
-        domain_focus = st.selectbox("Domain Focus", ["Web", "ML", "Data", "Core"])
-        communication = st.slider("Communication Skills (1-5)", 1, 5)
-        resume_quality = st.slider("Resume Quality (1-5)", 1, 5)
-        mock_interviews = st.number_input("Mock Interviews Attended", 0, 200)
-        learning_consistency = st.slider("Learning Consistency (1-5)", 1, 5)
-        self_awareness = st.slider("Self Awareness (1-5)", 1, 5)
+    with st.form("profile"):
+        profile = {
+            "name": st.text_input("Name"),
+            "dsa_level": st.selectbox("DSA Level", ["Beginner", "Intermediate", "Advanced"]),
+            "problem_count": st.number_input("Problems Solved", 0),
+            "language_count": st.number_input("Languages Known", 1),
+            "cs_fundamentals": st.slider("CS Fundamentals", 1, 5),
+            "project_count": st.number_input("Projects", 0),
+            "major_project": st.selectbox("Major Project", ["No", "Yes"]),
+            "github_quality": st.selectbox("GitHub Quality", ["Low", "Medium", "High"]),
+            "domain_focus": st.selectbox("Domain", ["Web", "ML", "Data", "Core"]),
+            "communication": st.slider("Communication", 1, 5),
+            "resume_quality": st.slider("Resume Quality", 1, 5),
+            "mock_interviews": st.number_input("Mock Interviews", 0),
+            "learning_consistency": st.slider("Consistency", 1, 5),
+            "self_awareness": st.slider("Self Awareness", 1, 5)
+        }
 
         if st.form_submit_button("Save Profile"):
-            st.session_state.profile = {
-                "name": name,
-                "dsa_level": dsa_level,
-                "problem_count": problem_count,
-                "language_count": language_count,
-                "cs_fundamentals": cs_fundamentals,
-                "project_count": project_count,
-                "major_project": major_project,
-                "github_quality": github_quality,
-                "domain_focus": domain_focus,
-                "communication": communication,
-                "resume_quality": resume_quality,
-                "mock_interviews": mock_interviews,
-                "learning_consistency": learning_consistency,
-                "self_awareness": self_awareness
-            }
-            st.success("Profile saved successfully ✅")
+            st.session_state.profile = profile
+            st.success("Profile Saved ✅")
 
-# ---------------- PLACEMENT ----------------
-elif menu == "📊 Placement Readiness & Guidance":
+# ================= PLACEMENT =================
+elif menu == "📊 Placement Readiness":
     if not st.session_state.profile:
-        st.warning("Please create your profile first.")
+        st.warning("Create profile first")
     else:
         level, score = predict_level(st.session_state.profile)
-        st.subheader(f"Level: {level}")
+        st.metric("Placement Level", level)
         st.progress(score)
-        st.write(f"Readiness Score: {score}%")
 
-        st.header("Guidance")
-        for g in recommendations(level, st.session_state.profile["domain_focus"]):
-            st.write("✔", g)
+        st.subheader("Guidance")
+        for r in recommendations(level, st.session_state.profile["domain_focus"]):
+            st.write("✔", r)
 
-# ---------------- COURSES ----------------
+# ================= COURSES =================
 elif menu == "📚 Free Courses":
-    st.header("🎓 Free Courses")
+    st.header("Free Coursera Courses")
 
     domain = st.selectbox(
-        "Select Domain",
+        "Choose Domain",
         ["Python", "Machine Learning", "Data Science", "Web Development"]
     )
 
-    if st.button("🔍 Find Courses"):
-        with st.spinner("Fetching real courses..."):
+    if st.button("Fetch Courses"):
+        with st.spinner("Loading courses..."):
             courses = fetch_courses()
-            st.write(courses[:20])
-        DOMAIN_KEYWORDS = {
-                  "Machine Learning": ["machine learning", "ml", "deep learning", "ai"],
-                  "Web Development": ["web", "html", "css", "javascript", "frontend", "backend"],
-                  "Python": ["python", "django", "flask", "pandas"],
-                  "Data Science": ["data", "data science", "data analysis", "analytics"]
-        }
-        keywords = DOMAIN_KEYWORDS.get(domain, [])
-        filtered = [
-            c for c in courses
-            if any(k in c.lower() for k in keywords)
-        ]
 
-        if filtered:
-            for course in filtered[:10]:
-                st.markdown(f"### 🎓 {course}")
+        keywords = {
+            "Python": ["python"],
+            "Machine Learning": ["ml", "machine", "ai"],
+            "Data Science": ["data"],
+            "Web Development": ["web", "html", "css", "javascript"]
+        }[domain]
+
+        filtered = [c for c in courses if any(k in c.lower() for k in keywords)]
+
+        for c in filtered[:10]:
+            st.success(c)
+
+# ================= JOBS =================
+elif menu == "💼 Jobs":
+    st.header("Live Job Openings")
+
+    role = st.selectbox(
+        "Select Role",
+        ["Software Engineer", "Data Analyst", "ML Engineer"]
+    )
+
+    if st.button("Find Jobs"):
+        jobs = fetch_jobs(role)
+
+        if jobs:
+            for j in jobs[:10]:
+                st.markdown(f"""
+                ### {j['role']}
+                **Company:** {j['company_name']}  
+                **Location:** {j['location']}  
+                [Apply Here]({j['url']})
+                """)
         else:
-            st.warning("No courses found. Try another domain.")
+            st.warning("No jobs found")
 
-
-# ---------------- JOBS ----------------
-elif menu == "💼 Job Entry Requirements":
-    for job, info in JOB_REQUIREMENTS.items():
-        st.subheader(job)
-        st.write("Minimum Level:", info["level"])
-        for s in info["skills"]:
-            st.write("•", s)
-
-# ---------------- ABOUT ----------------
-elif menu == "ℹ️ About VYNOX":
-    st.subheader("About VYNOX")
-    st.write("AI-powered career & placement guidance platform.")
-    st.write("**Team:** Swathika (Lead), Vishwa (Tech), Santhosh Kumar (Design)")
-
+# ================= ABOUT =================
+elif menu == "ℹ️ About":
+    st.header("About VYNOX")
+    st.write("AI-powered placement & career guidance platform")
+    st.write("Team: Swathika | Vishwa | Santhosh Kumar")
