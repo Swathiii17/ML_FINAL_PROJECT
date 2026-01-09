@@ -113,21 +113,20 @@ def fetch_courses():
         return []
 
 # Streamlit app
-st.title("Coursera Courses")
+  st.title("Coursera Courses")
 
 # Fetch course list
-courses = fetch_courses()
-
-if courses:
+  courses = fetch_courses()
+  if courses:
     # Show dropdown to select a course
-    selected_course = st.selectbox("Select a course:", courses)
-    st.write("You selected:", selected_course)
+     selected_course = st.selectbox("Select a course:", courses)
+     st.write("You selected:", selected_course)
 
     # Optional: show full list
-    st.subheader("All available courses:")
-    st.write(courses)
-else:
-    st.write("No courses available.")
+     st.subheader("All available courses:")
+     st.write(courses)
+  else:
+     st.write("No courses available.")
 
 
 # ---------------- JOB REQUIREMENTS ----------------
