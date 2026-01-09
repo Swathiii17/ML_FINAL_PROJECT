@@ -20,7 +20,7 @@ le_target = joblib.load("le_target.pkl")
 
 # ================= API KEYS =================
 RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
-FINDWORK_API_KEY = "YOUR_FINDWORK_API_KEY"   # free job API
+FINDWORK_API_KEY = "35430ca34ef912b63eb8e7540c27458b10ecd925"   # free job API
 
 # ================= FUNCTIONS =================
 def predict_level(profile):
