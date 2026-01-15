@@ -19,8 +19,8 @@ le_domain = joblib.load("le_domain.pkl")
 le_target = joblib.load("le_target.pkl")
 
 # ================= API KEYS =================
-RAPID_API_KEY = "6da45f54e5msha20ec1559af5427p166747jsnc887b50c4210"
-FINDWORK_API_KEY = "35430ca34ef912b63eb8e7540c27458b10ecd925"   # free job API
+RAPID_API_KEY = "YOUR_RAPID_API_KEY"
+FINDWORK_API_KEY = "YOUR_FINDWORK_API_KEY"
 
 # ================= FUNCTIONS =================
 def predict_level(profile):
@@ -66,7 +66,6 @@ def recommendations(level, domain):
     }
     return data[level]
 
-
 # ================= COURSE API =================
 def fetch_courses():
     url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_courses.php"
@@ -74,17 +73,37 @@ def fetch_courses():
         "X-RapidAPI-Key": RAPID_API_KEY,
         "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
     }
-    res = requests.get(url, headers=headers)
-    return res.json() if res.status_code == 200 else []
 
+    res = requests.get(url, headers=headers)
+
+    if res.status_code != 200:
+        return []
+
+    data = res.json()
+
+    # If API returns list of dicts
+    if isinstance(data, list) and isinstance(data[0], dict):
+        return [d.get("course_name", "") for d in data if "course_name" in d]
+
+    # If API returns list of strings
+    if isinstance(data, list):
+        return data
+
+    return []
 
 # ================= JOB API =================
 def fetch_jobs(role):
     url = f"https://findwork.dev/api/jobs/?search={role}"
-    headers = {"Authorization": f"Token {FINDWORK_API_KEY}"}
-    res = requests.get(url, headers=headers)
-    return res.json().get("results", []) if res.status_code == 200 else []
+    headers = {
+        "Authorization": f"Token {FINDWORK_API_KEY}"
+    }
 
+    res = requests.get(url, headers=headers)
+
+    if res.status_code != 200:
+        return []
+
+    return res.json().get("results", [])
 
 # ================= SIDEBAR =================
 user = st.session_state.profile["name"] if st.session_state.profile else "User"
@@ -127,9 +146,8 @@ elif menu == "👤 Create Profile":
         submitted = st.form_submit_button("Save Profile")
 
     if submitted:
-        st.session_state["profile"] = profile   # ✅ SAFE
+        st.session_state["profile"] = profile
         st.success("Profile saved successfully ✅")
-
 
 # ================= PLACEMENT =================
 elif menu == "📊 Placement Readiness":
@@ -154,7 +172,7 @@ elif menu == "📚 Free Courses":
     )
 
     if st.button("Fetch Courses"):
-        with st.spinner("Loading courses..."):
+        with st.spinner("Fetching courses..."):
             courses = fetch_courses()
 
         keywords = {
@@ -164,10 +182,16 @@ elif menu == "📚 Free Courses":
             "Web Development": ["web", "html", "css", "javascript"]
         }[domain]
 
-        filtered = [c for c in courses if any(k in c.lower() for k in keywords)]
+        filtered = []
+        for c in courses:
+            if isinstance(c, str) and any(k in c.lower() for k in keywords):
+                filtered.append(c)
 
-        for c in filtered[:10]:
-            st.success(c)
+        if filtered:
+            for c in filtered[:10]:
+                st.markdown(f"### 🎓 {c}")
+        else:
+            st.warning("No courses found for this domain")
 
 # ================= JOBS =================
 elif menu == "💼 Jobs":
@@ -184,10 +208,10 @@ elif menu == "💼 Jobs":
         if jobs:
             for j in jobs[:10]:
                 st.markdown(f"""
-                ### {j['role']}
-                **Company:** {j['company_name']}  
-                **Location:** {j['location']}  
-                [Apply Here]({j['url']})
+                ### {j.get('role','N/A')}
+                **Company:** {j.get('company_name','N/A')}  
+                **Location:** {j.get('location','Remote')}  
+                [Apply Here]({j.get('url','#')})
                 """)
         else:
             st.warning("No jobs found")
