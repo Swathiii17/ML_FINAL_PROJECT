@@ -69,6 +69,7 @@ def recommendations(level, domain):
 # ================= COURSE API =================
 def fetch_courses():
     url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_courses.php"
+
     headers = {
         "X-RapidAPI-Key": RAPID_API_KEY,
         "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
@@ -81,15 +82,18 @@ def fetch_courses():
 
     data = res.json()
 
-    # If API returns list of dicts
-    if isinstance(data, list) and isinstance(data[0], dict):
-        return [d.get("course_name", "") for d in data if "course_name" in d]
+    # API returns list of dicts
+    courses = []
+    for item in data:
+        name = item.get("course_name")
+        link = item.get("course_url")
+        if name:
+            courses.append({
+                "name": name,
+                "url": link
+            })
 
-    # If API returns list of strings
-    if isinstance(data, list):
-        return data
-
-    return []
+    return courses
 
 # ================= JOB API =================
 def fetch_jobs(role):
@@ -177,19 +181,22 @@ elif menu == "📚 Free Courses":
 
         keywords = {
             "Python": ["python"],
-            "Machine Learning": ["ml", "machine", "ai"],
+            "Machine Learning": ["machine", "ml", "ai"],
             "Data Science": ["data"],
             "Web Development": ["web", "html", "css", "javascript"]
         }[domain]
 
-        filtered = []
-        for c in courses:
-            if isinstance(c, str) and any(k in c.lower() for k in keywords):
-                filtered.append(c)
+        filtered = [
+            c for c in courses
+            if any(k in c["name"].lower() for k in keywords)
+        ]
 
         if filtered:
             for c in filtered[:10]:
-                st.markdown(f"### 🎓 {c}")
+                st.markdown(
+                    f"### 🎓 {c['name']}\n"
+                    f"[Go to course]({c['url']})"
+                )
         else:
             st.warning("No courses found for this domain")
 
