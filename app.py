@@ -301,7 +301,7 @@ elif menu == "📚 Free Courses":
     st.header("📚 Free Courses")
 
     for course in FALLBACK_COURSES:
-    with st.container():
+      with st.container():
         st.markdown(
             f'''
             <div style='border:2px solid #4CAF50; padding:20px; border-radius:10px; margin-bottom:20px;'>
