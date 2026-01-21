@@ -302,6 +302,79 @@ elif menu == "💼 Jobs":
 
 # ================= ABOUT =================
 elif menu == "ℹ️ About":
-    st.header("About VYNOX")
-    st.write("AI-powered placement & career guidance platform")
-    st.write("Team: Swathika | Vishwa | Santhosh Kumar")
+
+    # PAGE TITLE
+    st.markdown("## ℹ️ About **VYNOX**")
+    st.markdown("### Empowering Students for Smarter Career Decisions")
+
+    st.divider()
+
+    # DESCRIPTION (useful for viva)
+    st.write(
+        "VYNOX is an AI-powered, product-based placement readiness platform "
+        "designed to support students in evaluating their career preparedness. "
+        "By combining machine learning, skill analysis, and personalized guidance, "
+        "VYNOX helps learners understand their strengths, identify gaps, and take "
+        "confident steps toward successful placements."
+    )
+
+    st.write(
+        "The platform bridges the gap between academic knowledge and industry "
+        "expectations by offering placement prediction, curated learning paths, "
+        "and real-world job insights in a single unified system."
+    )
+
+    st.divider()
+
+    # PROJECT TEAM
+    st.markdown("## 👥 Project Team")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.success(
+            "**Swathika P**  \n"
+            "Frontend & UI Design  \n"
+            "Streamlit Integration"
+        )
+
+    with col2:
+        st.success(
+            "**Vishwa R**  \n"
+            "Machine Learning Model  \n"
+            "Data Processing"
+        )
+
+    with col3:
+        st.success(
+            "**Santhosh Kumar U**  \n"
+            "Backend Logic  \n"
+            "API Integration"
+        )
+
+    st.divider()
+
+    # CONTACT DETAILS
+    st.markdown("## 📞 Contact Details")
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.info(
+            "📧 **Email**  \n"
+            "vynox.support@gmail.com"
+        )
+
+    with c2:
+        st.info(
+            "🌐 **LinkedIn**  \n"
+            "https://www.linkedin.com/company/vynox"
+        )
+
+    st.divider()
+
+    # FOOTER NOTE
+    st.caption(
+        "© 2026 VYNOX | AI-Powered Placement Readiness Platform | All Rights Reserved"
+    )
+
