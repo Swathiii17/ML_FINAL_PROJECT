@@ -67,49 +67,108 @@ def recommendations(level, domain):
     return data[level]
 
 # ================= COURSE API =================
-def fetch_courses():
-    url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_courses.php"
-
-    headers = {
-        "X-RapidAPI-Key": RAPID_API_KEY,
-        "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
+FALLBACK_COURSES = [
+    {
+        "name": "Python for Everybody – Coursera",
+        "url": "https://www.coursera.org/specializations/python",
+        "description": "Learn Python basics and work with data. Free to audit; certificate optional."
+    },
+    {
+        "name": "Machine Learning – Andrew Ng",
+        "url": "https://www.coursera.org/learn/machine-learning",
+        "description": "Introductory ML course covering algorithms and applications. Free to audit; certificate optional."
+    },
+    {
+        "name": "Google Data Analytics",
+        "url": "https://www.coursera.org/professional-certificates/google-data-analytics",
+        "description": "Learn data cleaning, visualization, and analysis using Google tools. Free to audit; certificate optional."
+    },
+    {
+        "name": "Web Development Bootcamp – Udemy",
+        "url": "https://www.udemy.com/course/the-web-developer-bootcamp/",
+        "description": "Full-stack web development with HTML, CSS, JS, and Node.js. Free access possible via coupons or audit."
+    },
+    {
+        "name": "CS50 – Harvard",
+        "url": "https://cs50.harvard.edu/x/",
+        "description": "Harvard’s CS50 Introduction to Computer Science. Free to study online with optional certificate."
     }
+]
+#def fetch_courses():
+    #url = "https://collection-for-coursera-courses.p.rapidapi.com/rapidapi/course/get_courses.php"
 
-    try:
-        res = requests.get(url, headers=headers, timeout=10)
-        res.raise_for_status()
-        data = res.json()
+   # headers = {
+       # "X-RapidAPI-Key": RAPID_API_KEY,
+       # "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
+   # }
 
-        courses = []
-        for item in data:
-            courses.append({
-                "name": item.get("course_name", "Unnamed Course"),
-                "url": item.get("course_url", "#")
-            })
+   # try:
+        #res = requests.get(url, headers=headers, timeout=10)
+        #res.raise_for_status()
+        #data = res.json()
 
-        return courses
+        #courses = []
+        #for item in data:
+            #courses.append({
+                #"name": item.get("course_name", "Unnamed Course"),
+                #"url": item.get("course_url", "#")
+            #})
 
-    except Exception as e:
-        st.error(f"Course API Error: {e}")
-        return []
+        #return courses
+
+    #except Exception as e:
+        #st.error(f"Course API Error: {e}")
+        #return []
 
 
 # ================= JOB API =================
-def fetch_jobs(role):
-    url = f"https://findwork.dev/api/jobs/?search={role}"
-
-    headers = {
-        "Authorization": f"Token {FINDWORK_API_KEY}"
+FALLBACK_JOBS = [
+    {
+        "role": "Junior Python Developer",
+        "company_name": "Tech Solutions Pvt Ltd",
+        "location": "Remote",
+        "url": "https://www.indeed.com/viewjob?jk=python_dev_001"
+    },
+    {
+        "role": "Machine Learning Intern",
+        "company_name": "DataCorp AI",
+        "location": "Bangalore, India",
+        "url": "https://www.indeed.com/viewjob?jk=ml_intern_002"
+    },
+    {
+        "role": "Web Developer Intern",
+        "company_name": "WebWorks",
+        "location": "Chennai, India",
+        "url": "https://www.indeed.com/viewjob?jk=web_dev_003"
+    },
+    {
+        "role": "Data Analyst Intern",
+        "company_name": "Analytics Pro",
+        "location": "Remote",
+        "url": "https://www.indeed.com/viewjob?jk=data_analyst_004"
+    },
+    {
+        "role": "Frontend Developer",
+        "company_name": "DesignSoft",
+        "location": "Mumbai, India",
+        "url": "https://www.indeed.com/viewjob?jk=frontend_dev_005"
     }
+]
+#def fetch_jobs(role):
+    #url = f"https://findwork.dev/api/jobs/?search={role}"
 
-    try:
-        res = requests.get(url, headers=headers, timeout=10)
-        res.raise_for_status()
-        return res.json().get("results", [])
+    #headers = {
+        #"Authorization": f"Token {FINDWORK_API_KEY}"
+    #}
 
-    except Exception as e:
-        st.error(f"Job API Error: {e}")
-        return []
+    #try:
+        #res = requests.get(url, headers=headers, timeout=10)
+        #res.raise_for_status()
+        #return res.json().get("results", [])
+
+    #except Exception as e:
+        #st.error(f"Job API Error: {e}")
+        #return []
 
 
 # ================= SIDEBAR =================
@@ -239,83 +298,41 @@ elif menu == "📊 Placement Readiness":
 
 # ================= COURSES =================
 elif menu == "📚 Free Courses":
-    st.header("📚 Free Online Courses")
+    st.header("📚 Free Courses")
 
-    if st.button("Fetch Courses"):
-        with st.spinner("Fetching courses..."):
-            courses = fetch_courses()  # API attempt
-
-        # ===== FALLBACK COURSES =====
-        FALLBACK_COURSES = [
-            {
-                "name": "Introduction to Data Analytics with Python",
-                "url": "https://alison.com/course/introduction-to-data-analytics-with-python",
-                "description": "Learn the basics of Python and data analytics fundamentals. Free course; certificate optional."
-            },
-            {
-                "name": "Diploma in Data Analytics with Python",
-                "url": "https://alison.com/course/diploma-in-data-analytics-with-python",
-                "description": "A career-oriented data analytics path using Python. Free modules; certificate optional."
-            },
-            {
-                "name": "Data Science with Python",
-                "url": "https://www.mygreatlearning.com/academy/learn-for-free/courses/data-science-with-python",
-                "description": "Learn Python, data transformation, stats, visualization & more. Completely free with certificate."
-            },
-            {
-                "name": "Python for Data Science",
-                "url": "https://www.mygreatlearning.com/academy/learn-for-free/courses/python-for-data-science-1",
-                "description": "Intro to Python for data work including NumPy and Pandas. Free self-paced course with certificate."
-            }
-        ]
-
-        # If API fails or returns empty, use fallback
-        if not courses:
-            st.warning("API did not return courses, showing free courses instead.")
-            courses = FALLBACK_COURSES
-        else:
-            # If API courses exist but have no description, add default description
-            for c in courses:
-                if "description" not in c:
-                    c["description"] = "Free online course"
-
-        # Display all courses as boxes
-        for course in courses:
-            with st.container():
-                st.markdown(
-                    f"""
-                    <div style="border:2px solid #4CAF50; padding:20px; border-radius:10px; margin-bottom:20px;">
-                        <h3 style="color:#4CAF50;">🎓 {course['name']}</h3>
-                        <p>{course['description']}</p>
-                        <a href="{course['url']}" target="_blank" style="text-decoration:none; color:white; background-color:#4CAF50; padding:8px 16px; border-radius:5px;">Go to Course</a>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+    for course in FALLBACK_COURSES:
+        with st.container():
+            st.markdown(f""'
+                <div style="border:2px solid #4CAF50; padding:20px; border-radius:10px; margin-bottom:20px;">
+                <h3 style="color:#4CAF50;">🎓 {course['name']}</h3>
+                <p>{course['description']}</p>
+                <a href="{course['url']}" target="_blank" style="text-decoration:none; color:white; background-color:#4CAF50; padding:8px 16px; border-radius:5px;">Go to Course
+                </a>
+                </div>
+                 ""',
+                unsafe_allow_html=True
+            )
 
 
 
 # ================= JOBS =================
 elif menu == "💼 Jobs":
-    st.header("💼 Available Jobs")
+    st.header("💼 Jobs")
 
-    role = st.text_input("Search Role (leave empty to show all)", "")
+    for job in FALLBACK_JOBS:
+        with st.container():
+            st.markdown(
+                f"""
+                <div style="border:2px solid #2196F3; padding:20px; border-radius:10px; margin-bottom:20px;">
+                    <h3 style="color:#2196F3;">💼 {job['role']}</h3>
+                    <p><b>Company:</b> {job['company_name']}<br>
+                    <b>Location:</b> {job['location']}</p>
+                    <a href="{job['url']}" target="_blank" style="text-decoration:none; color:white; background-color:#2196F3; padding:8px 16px; border-radius:5px;">Apply Now</a>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-    if st.button("Fetch Jobs"):
-        jobs = fetch_jobs(role)
-
-        st.write("Total jobs found:", len(jobs))
-
-        if jobs:
-            for j in jobs:
-                st.markdown(
-                    f"### {j.get('role','N/A')}\n"
-                    f"**Company:** {j.get('company_name','N/A')}  \n"
-                    f"**Location:** {j.get('location','Remote')}  \n"
-                    f"[Apply Here]({j.get('url','#')})"
-                )
-        else:
-            st.warning("No jobs available")
 
 
 # ================= ABOUT =================
