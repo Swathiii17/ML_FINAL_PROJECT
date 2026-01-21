@@ -334,22 +334,19 @@ elif menu == "ℹ️ About":
     with col1:
         st.success(
             "**Swathika P**  \n"
-            "Frontend & UI Design  \n"
-            "Streamlit Integration"
+            "Team Lead"
         )
 
     with col2:
         st.success(
             "**Vishwa R**  \n"
-            "Machine Learning Model  \n"
-            "Data Processing"
+            "Tech Lead"
         )
 
     with col3:
         st.success(
             "**Santhosh Kumar U**  \n"
-            "Backend Logic  \n"
-            "API Integration"
+            "Designer"
         )
 
     st.divider()
@@ -369,6 +366,11 @@ elif menu == "ℹ️ About":
         st.info(
             "🌐 **LinkedIn**  \n"
             "https://www.linkedin.com/company/vynox"
+        )
+    with c3:
+        st.info(
+            "🌐 **Phone**  \n"
+            "+91 80000 40000"
         )
 
     st.divider()
