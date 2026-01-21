@@ -239,22 +239,60 @@ elif menu == "📊 Placement Readiness":
 
 # ================= COURSES =================
 elif menu == "📚 Free Courses":
-    st.header("📚 Available Courses")
+    st.header("📚 Free Online Courses")
 
-    if st.button("Fetch All Courses"):
+    if st.button("Fetch Courses"):
         with st.spinner("Fetching courses..."):
-            courses = fetch_courses()
+            courses = fetch_courses()  # API attempt
 
-        st.write("Total courses found:", len(courses))
+        # ===== FALLBACK COURSES =====
+        FALLBACK_COURSES = [
+            {
+                "name": "Introduction to Data Analytics with Python",
+                "url": "https://alison.com/course/introduction-to-data-analytics-with-python",
+                "description": "Learn the basics of Python and data analytics fundamentals. Free course; certificate optional."
+            },
+            {
+                "name": "Diploma in Data Analytics with Python",
+                "url": "https://alison.com/course/diploma-in-data-analytics-with-python",
+                "description": "A career-oriented data analytics path using Python. Free modules; certificate optional."
+            },
+            {
+                "name": "Data Science with Python",
+                "url": "https://www.mygreatlearning.com/academy/learn-for-free/courses/data-science-with-python",
+                "description": "Learn Python, data transformation, stats, visualization & more. Completely free with certificate."
+            },
+            {
+                "name": "Python for Data Science",
+                "url": "https://www.mygreatlearning.com/academy/learn-for-free/courses/python-for-data-science-1",
+                "description": "Intro to Python for data work including NumPy and Pandas. Free self-paced course with certificate."
+            }
+        ]
 
-        if courses:
-            for c in courses:
-                st.markdown(
-                    f"### 🎓 {c['name']}\n"
-                    f"[Go to course]({c['url']})"
-                )
+        # If API fails or returns empty, use fallback
+        if not courses:
+            st.warning("API did not return courses, showing free courses instead.")
+            courses = FALLBACK_COURSES
         else:
-            st.warning("No courses available")
+            # If API courses exist but have no description, add default description
+            for c in courses:
+                if "description" not in c:
+                    c["description"] = "Free online course"
+
+        # Display all courses as boxes
+        for course in courses:
+            with st.container():
+                st.markdown(
+                    f"""
+                    <div style="border:2px solid #4CAF50; padding:20px; border-radius:10px; margin-bottom:20px;">
+                        <h3 style="color:#4CAF50;">🎓 {course['name']}</h3>
+                        <p>{course['description']}</p>
+                        <a href="{course['url']}" target="_blank" style="text-decoration:none; color:white; background-color:#4CAF50; padding:8px 16px; border-radius:5px;">Go to Course</a>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
 
 
 # ================= JOBS =================
