@@ -182,18 +182,18 @@ if menu == "🏠 Home":
     st.divider()
 
     # SLOGAN / VISION / MISSION
-    st.markdown("### 🏷️ **SLOGAN**")
-    st.write("**Shaping Digital Futures**")
+    st.markdown("### 🏷️ **OUR SLOGAN**")
+    st.write("**  Shaping Digital Futures**")
 
-    st.markdown("### 👁️ **VISION**")
+    st.markdown("### 👁️ **OUR VISION**")
     st.write(
-        "To empower students with intelligent tools that transform "
+        "  To empower students with intelligent tools that transform "
         "career preparation into a confident and data-driven journey."
     )
 
-    st.markdown("### 🚀 **MISSION**")
+    st.markdown("### 🚀 **OUR MISSION**")
     st.write(
-        "To build reliable, innovative, and accessible products that "
+        "  To build reliable, innovative, and accessible products that "
         "guide learners towards successful careers through technology."
     )
 
