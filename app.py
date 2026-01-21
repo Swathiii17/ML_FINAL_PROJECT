@@ -354,7 +354,7 @@ elif menu == "ℹ️ About":
     # CONTACT DETAILS
     st.markdown("## 📞 Contact Details")
 
-    c1, c2 = st.columns(2)
+    c1, c2,c3 = st.columns(3)
 
     with c1:
         st.info(
