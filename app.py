@@ -122,8 +122,85 @@ menu = st.sidebar.radio(
 
 # ================= HOME =================
 if menu == "🏠 Home":
-    st.title("VYNOX")
-    st.subheader("AI-Powered Placement Readiness & Career Guidance Platform")
+
+    # HERO SECTION
+    st.markdown("## 👋 WELCOME TO **TEAM VYNOX**")
+    st.markdown("### Your Smart Path to Placement")
+
+    st.write(
+        "VYNOX is a product-based platform designed to guide students "
+        "towards successful placements using intelligent prediction, "
+        "skill analysis, and personalized guidance."
+    )
+
+    st.info("👉 Use the **Create Profile** tab to get started")
+
+    st.divider()
+
+    # HOW PLATFORM WORKS
+    st.markdown("## 🔄 How Our Platform Works")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.success("**Create Profile**\n\nEnter academic & skill details")
+
+    with col2:
+        st.success("**Placement Prediction**\n\nML predicts readiness level")
+
+    with col3:
+        st.success("**Course Guidance**\n\nPersonalized learning paths")
+
+    with col4:
+        st.success("**Job Suggestions**\n\nRoles aligned to your profile")
+
+    st.divider()
+
+    # WHAT WE OFFER
+    st.markdown("## 🎯 What We Offer")
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        st.info("**Placement Readiness**\n\nData-driven insights")
+
+    with c2:
+        st.info("**Skill Enhancement**\n\nFocused recommendations")
+
+    with c3:
+        st.info("**Career Guidance**\n\nLong-term growth direction")
+
+    st.divider()
+
+    # EXTRA DESCRIPTION
+    st.write(
+        "Our platform bridges the gap between academic learning and industry "
+        "requirements by providing intelligent insights that help students "
+        "prepare confidently for placements."
+    )
+
+    st.divider()
+
+    # SLOGAN / VISION / MISSION
+    st.markdown("### 🏷️ **SLOGAN**")
+    st.write("**Shaping Digital Futures**")
+
+    st.markdown("### 👁️ **VISION**")
+    st.write(
+        "To empower students with intelligent tools that transform "
+        "career preparation into a confident and data-driven journey."
+    )
+
+    st.markdown("### 🚀 **MISSION**")
+    st.write(
+        "To build reliable, innovative, and accessible products that "
+        "guide learners towards successful careers through technology."
+    )
+
+    st.divider()
+
+    st.caption("© 2026 VYNOX | All Rights Reserved")
+
 
 # ================= PROFILE =================
 elif menu == "👤 Create Profile":
