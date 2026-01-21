@@ -75,39 +75,42 @@ def fetch_courses():
         "X-RapidAPI-Host": "collection-for-coursera-courses.p.rapidapi.com"
     }
 
-    res = requests.get(url, headers=headers)
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        res.raise_for_status()
+        data = res.json()
 
-    if res.status_code != 200:
-        return []
-
-    data = res.json()
-
-    # API returns list of dicts
-    courses = []
-    for item in data:
-        name = item.get("course_name")
-        link = item.get("course_url")
-        if name:
+        courses = []
+        for item in data:
             courses.append({
-                "name": name,
-                "url": link
+                "name": item.get("course_name", "Unnamed Course"),
+                "url": item.get("course_url", "#")
             })
 
-    return courses
+        return courses
+
+    except Exception as e:
+        st.error(f"Course API Error: {e}")
+        return []
+
 
 # ================= JOB API =================
 def fetch_jobs(role):
     url = f"https://findwork.dev/api/jobs/?search={role}"
+
     headers = {
         "Authorization": f"Token {FINDWORK_API_KEY}"
     }
 
-    res = requests.get(url, headers=headers)
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        res.raise_for_status()
+        return res.json().get("results", [])
 
-    if res.status_code != 200:
+    except Exception as e:
+        st.error(f"Job API Error: {e}")
         return []
 
-    return res.json().get("results", [])
 
 # ================= SIDEBAR =================
 user = st.session_state.profile["name"] if st.session_state.profile else "User"
@@ -236,60 +239,46 @@ elif menu == "📊 Placement Readiness":
 
 # ================= COURSES =================
 elif menu == "📚 Free Courses":
-    st.header("Free Coursera Courses")
+    st.header("📚 Available Courses")
 
-    domain = st.selectbox(
-        "Choose Domain",
-        ["Python", "Machine Learning", "Data Science", "Web Development"]
-    )
-
-    if st.button("Fetch Courses"):
+    if st.button("Fetch All Courses"):
         with st.spinner("Fetching courses..."):
             courses = fetch_courses()
 
-        keywords = {
-            "Python": ["python"],
-            "Machine Learning": ["machine", "ml", "ai"],
-            "Data Science": ["data"],
-            "Web Development": ["web", "html", "css", "javascript"]
-        }[domain]
+        st.write("Total courses found:", len(courses))
 
-        filtered = [
-            c for c in courses
-            if any(k in c["name"].lower() for k in keywords)
-        ]
-
-        if filtered:
-            for c in filtered[:10]:
+        if courses:
+            for c in courses:
                 st.markdown(
                     f"### 🎓 {c['name']}\n"
                     f"[Go to course]({c['url']})"
                 )
         else:
-            st.warning("No courses found for this domain")
+            st.warning("No courses available")
+
 
 # ================= JOBS =================
 elif menu == "💼 Jobs":
-    st.header("Live Job Openings")
+    st.header("💼 Available Jobs")
 
-    role = st.selectbox(
-        "Select Role",
-        ["Software Engineer", "Data Analyst", "ML Engineer"]
-    )
+    role = st.text_input("Search Role (leave empty to show all)", "")
 
-    if st.button("Find Jobs"):
+    if st.button("Fetch Jobs"):
         jobs = fetch_jobs(role)
 
+        st.write("Total jobs found:", len(jobs))
+
         if jobs:
-            for j in jobs[:10]:
-                st.markdown(f"""
-                ### {j.get('role','N/A')}
-                **Company:** {j.get('company_name','N/A')}  
-                **Location:** {j.get('location','Remote')}  
-                [Apply Here]({j.get('url','#')})
-                """)
+            for j in jobs:
+                st.markdown(
+                    f"### {j.get('role','N/A')}\n"
+                    f"**Company:** {j.get('company_name','N/A')}  \n"
+                    f"**Location:** {j.get('location','Remote')}  \n"
+                    f"[Apply Here]({j.get('url','#')})"
+                )
         else:
-            st.warning("No jobs found")
+            st.warning("No jobs available")
+
 
 # ================= ABOUT =================
 elif menu == "ℹ️ About":
