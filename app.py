@@ -141,7 +141,7 @@ if menu == "🏠 Home":
     st.divider()
 
     # HOW PLATFORM WORKS
-    st.markdown("## 🔄 How Our Platform Works\n")
+    st.markdown("## 🔄 How Our Platform Works")
 
     col1, col2, col3, col4 = st.columns(4)
 
