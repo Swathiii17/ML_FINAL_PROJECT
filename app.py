@@ -130,15 +130,15 @@ if menu == "🏠 Home":
     st.write(
         "VYNOX is a product-based platform designed to guide students "
         "towards successful placements using intelligent prediction, "
-        "skill analysis, and personalized guidance."
+        "skill analysis, and personalized guidance.\n"
     )
 
-    st.info("👉 Use the **Create Profile** tab to get started")
+    st.info("👉 Use the **Create Profile** tab to get started\n")
 
     st.divider()
 
     # HOW PLATFORM WORKS
-    st.markdown("## 🔄 How Our Platform Works")
+    st.markdown("## 🔄 How Our Platform Works\n")
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -157,7 +157,7 @@ if menu == "🏠 Home":
     st.divider()
 
     # WHAT WE OFFER
-    st.markdown("## 🎯 What We Offer")
+    st.markdown("## 🎯 What We Offer\n")
 
     c1, c2, c3 = st.columns(3)
 
@@ -169,15 +169,6 @@ if menu == "🏠 Home":
 
     with c3:
         st.info("**Career Guidance**\n\nLong-term growth direction")
-
-    st.divider()
-
-    # EXTRA DESCRIPTION
-    st.write(
-        "Our platform bridges the gap between academic learning and industry "
-        "requirements by providing intelligent insights that help students "
-        "prepare confidently for placements."
-    )
 
     st.divider()
 
