@@ -3,14 +3,13 @@ import numpy as np
 import joblib
 import requests
 
-# ================= PAGE CONFIG =================
 st.set_page_config(page_title="VYNOX", layout="wide")
 
-# ================= SESSION STATE =================
+
 if "profile" not in st.session_state:
     st.session_state["profile"] = None
 
-# ================= LOAD MODELS =================
+
 clf = joblib.load("placement_model.pkl")
 le_dsa = joblib.load("le_dsa.pkl")
 le_major = joblib.load("le_major.pkl")
@@ -18,11 +17,10 @@ le_github = joblib.load("le_github.pkl")
 le_domain = joblib.load("le_domain.pkl")
 le_target = joblib.load("le_target.pkl")
 
-# ================= API KEYS =================
+
 RAPID_API_KEY = "YOUR_RAPID_API_KEY"
 FINDWORK_API_KEY = "YOUR_FINDWORK_API_KEY"
 
-# ================= FUNCTIONS =================
 def predict_level(profile):
     X = np.array([
         le_dsa.transform([profile["dsa_level"]])[0],
@@ -66,7 +64,7 @@ def recommendations(level, domain):
     }
     return data[level]
 
-# ================= COURSE API =================
+
 FALLBACK_COURSES = [
     {
         "name": "Python for Everybody – Coursera",
@@ -121,7 +119,6 @@ FALLBACK_COURSES = [
         #return []
 
 
-# ================= JOB API =================
 FALLBACK_JOBS = [
     {
         "role": "Junior Python Developer",
@@ -171,7 +168,6 @@ FALLBACK_JOBS = [
         #return []
 
 
-# ================= SIDEBAR =================
 user = st.session_state.profile["name"] if st.session_state.profile else "User"
 st.sidebar.title("VYNOX 🚀")
 st.sidebar.markdown(f"👋 Hello **{user}**")
@@ -182,10 +178,8 @@ menu = st.sidebar.radio(
      "📚 Free Courses", "💼 Jobs", "ℹ️ About"]
 )
 
-# ================= HOME =================
-if menu == "🏠 Home":
 
-    # HERO SECTION
+if menu == "🏠 Home":
     st.markdown("## 👋 WELCOME TO **TEAM VYNOX**")
     st.markdown("### Your Smart Path to Placement")
 
@@ -199,7 +193,6 @@ if menu == "🏠 Home":
 
     st.divider()
 
-    # HOW PLATFORM WORKS
     st.markdown("## 🔄 How Our Platform Works")
 
     col1, col2, col3, col4 = st.columns(4)
@@ -218,7 +211,6 @@ if menu == "🏠 Home":
 
     st.divider()
 
-    # WHAT WE OFFER
     st.markdown("## 🎯 What We Offer\n")
 
     c1, c2, c3 = st.columns(3)
@@ -234,7 +226,7 @@ if menu == "🏠 Home":
 
     st.divider()
 
-    # SLOGAN / VISION / MISSION
+
     st.markdown("### 🏷️ **OUR SLOGAN**")
     st.write("**  Shaping Digital Futures**")
 
@@ -254,8 +246,6 @@ if menu == "🏠 Home":
 
     st.caption("© 2026 VYNOX | All Rights Reserved")
 
-
-# ================= PROFILE =================
 elif menu == "👤 Create Profile":
     st.header("Create Your Profile")
 
@@ -283,7 +273,7 @@ elif menu == "👤 Create Profile":
         st.session_state["profile"] = profile
         st.success("Profile saved successfully ✅")
 
-# ================= PLACEMENT =================
+
 elif menu == "📊 Placement Readiness":
     if not st.session_state.profile:
         st.warning("Create profile first")
@@ -296,7 +286,7 @@ elif menu == "📊 Placement Readiness":
         for r in recommendations(level, st.session_state.profile["domain_focus"]):
             st.write("✔", r)
 
-# ================= COURSES =================
+
 elif menu == "📚 Free Courses":
     st.header("📚 Free Courses")
 
@@ -314,8 +304,6 @@ elif menu == "📚 Free Courses":
         )
 
 
-
-# ================= JOBS =================
 elif menu == "💼 Jobs":
     st.header("💼 Jobs")
 
@@ -333,9 +321,6 @@ elif menu == "💼 Jobs":
                 unsafe_allow_html=True
             )
 
-
-
-# ================= ABOUT =================
 elif menu == "ℹ️ About":
 
     # PAGE TITLE
