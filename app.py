@@ -359,13 +359,13 @@ elif menu == "ℹ️ About":
 
     with col2:
         st.success(
-            "**Vishwa R**  \n"
+            "**Esther Blessy P**  \n"
             "Tech Lead"
         )
 
     with col3:
         st.success(
-            "**Santhosh Kumar U**  \n"
+            "**Lokha Sri Nidhi K**  \n"
             "Designer"
         )
 
